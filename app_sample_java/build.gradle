@@ -1,0 +1,26 @@
+plugins {
+    id 'com.android.application'
+}
+apply from: '../base_android.gradle'
+
+android {
+    namespace 'com.joelzhu.lib.scanner.java'
+
+    defaultConfig {
+        applicationId "com.joelzhu.lib.scanner.java"
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation 'io.github.joelzhu:scanner-runtime:1.2'
+    annotationProcessor 'io.github.joelzhu:scanner-compile:1.2'
+}

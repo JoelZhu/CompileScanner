@@ -1,0 +1,29 @@
+android {
+    compileSdk project.compileSdkVersion
+
+    defaultConfig {
+        minSdk project.minSdkVersion
+        targetSdk project.targetSdkVersion
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        dataBinding {
+            enabled true
+        }
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation "androidx.activity:activity-ktx:${project.activityKtxVersion}"
+
+    implementation "androidx.core:core-ktx:$project.appCoreKtxVersion"
+    implementation "androidx.appcompat:appcompat:$project.appCompatVersion"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$project.kotlinVersion"
+}
