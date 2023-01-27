@@ -4,7 +4,10 @@ import android.util.Log;
 
 import com.joelzhu.lib.scanner.annotation.CompileScan;
 import com.joelzhu.lib.scanner.annotation.Constants;
+import com.joelzhu.lib.scanner.runtime.exception.ImplementFailureException;
+import com.joelzhu.lib.scanner.runtime.exception.MismatchLibraryException;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -70,14 +73,47 @@ public final class Scanner {
      * @return the classes
      */
     public static Class<?>[] getAnnotatedClasses(final String tag) {
-        Class<?>[] classes = null;
+        final Class<?>[] classes;
         try {
             final Class<?> clazz = Class.forName(Constants.CLASS_PACKAGE + "." + Constants.CLASS_NAME);
-            final Method method = clazz.getDeclaredMethod(Constants.GETTER_METHOD_NAME, String.class);
+            final Method method = clazz.getDeclaredMethod(Constants.GET_CLASS_METHOD_NAME, String.class);
             classes = (Class<?>[]) method.invoke(null, tag);
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException exception) {
+        } catch (ClassNotFoundException | NoSuchMethodException exception) {
             Log.w(TAG, "Invoke method got exception: " + exception.getMessage());
+            throw new ImplementFailureException();
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException exception) {
+            Log.w(TAG, "Invoke method got exception: " + exception.getMessage());
+            throw new MismatchLibraryException();
         }
         return classes == null ? new Class[0] : classes;
+    }
+
+    public static <T> T[] getAnnotatedInstances(final Class<T> instanceClass) {
+        return getAnnotatedInstances("", instanceClass);
+    }
+
+    public static <T> T[] getAnnotatedInstances(final String tag, final Class<T> instanceClass) {
+        final T[] instances;
+        try {
+            final Class<?> clazz = Class.forName(Constants.CLASS_PACKAGE + "." + Constants.CLASS_NAME);
+            final Method method =
+                clazz.getDeclaredMethod(Constants.GET_INSTANCE_METHOD_NAME, String.class, Class.class);
+            final Object[] invokedArray = (Object[]) method.invoke(null, tag, instanceClass);
+            if (invokedArray == null) {
+                throw new ImplementFailureException();
+            }
+            final int arrayLength = invokedArray.length;
+            instances = (T[]) Array.newInstance(instanceClass, arrayLength);
+            for (int index = 0; index < arrayLength; index++) {
+                instances[index] = (T) invokedArray[index];
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException exception) {
+            Log.w(TAG, "Invoke method got exception: " + exception.getMessage());
+            throw new ImplementFailureException();
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException exception) {
+            Log.w(TAG, "Invoke method got exception: " + exception.getMessage());
+            throw new MismatchLibraryException();
+        }
+        return instances == null ? (T[]) Array.newInstance(instanceClass, 0) : instances;
     }
 }

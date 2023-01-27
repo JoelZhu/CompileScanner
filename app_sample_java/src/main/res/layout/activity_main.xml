@@ -5,9 +5,18 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/tvContent"
+        android:id="@+id/tvContentClasses"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="32sp" />
+
+    <TextView
+        android:id="@+id/tvContentInstances"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:gravity="center"
         android:textSize="32sp" />
 </LinearLayout>

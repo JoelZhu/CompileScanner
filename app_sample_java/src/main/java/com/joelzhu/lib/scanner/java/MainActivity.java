@@ -19,11 +19,11 @@ public final class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final String humanLifeInADay = printHumanLifeInADay();
-        ((TextView) findViewById(R.id.tvContent)).setText(humanLifeInADay);
+        ((TextView) findViewById(R.id.tvContentClasses)).setText(printHumanLifeInADayByClasses());
+        ((TextView) findViewById(R.id.tvContentInstances)).setText(printHumanLifeInADayByInstances());
     }
 
-    private String printHumanLifeInADay() {
+    private String printHumanLifeInADayByClasses() {
         final StringBuilder stringBuilder = new StringBuilder();
         final Class<?>[] classes = Scanner.getAnnotatedClasses();
         for (final Class<?> clazz : classes) {
@@ -37,6 +37,15 @@ public final class MainActivity extends AppCompatActivity {
             } catch (IllegalAccessException | InstantiationException exception) {
                 exception.printStackTrace();
             }
+        }
+        return stringBuilder.toString();
+    }
+
+    private String printHumanLifeInADayByInstances() {
+        final StringBuilder stringBuilder = new StringBuilder();
+        final ICommand[] commands = Scanner.getAnnotatedInstances("", ICommand.class);
+        for (final ICommand command : commands) {
+            stringBuilder.append(command.execute()).append("\n");
         }
         return stringBuilder.toString();
     }

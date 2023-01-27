@@ -53,9 +53,9 @@ class CompileScanProcessor : AbstractProcessor() {
         try {
             openWriteStream()
             writeClassDeclaration()
-            writeConstants(classesMap)
             writePrivateConstructor()
-            writeGetter(classesMap)
+            writeClassesGetter(classesMap)
+            writeInstancesGetter(classesMap)
             writeClassEnding()
         } catch (exception: IOException) {
             printProcessorError("Write file got exception: " + exception.message)
@@ -100,51 +100,63 @@ class CompileScanProcessor : AbstractProcessor() {
     }
 
     private fun writeClassDeclaration() {
-        writer.append("package ${Constants.CLASS_PACKAGE};").append("\n")
+        writer.append("package ${Constants.CLASS_PACKAGE};\n")
         writer.append("\n")
-        writer.append("public final class ${Constants.CLASS_NAME} {").append("\n")
-    }
-
-    private fun writeConstants(classesMap: MutableMap<String, MutableList<String>>) {
-        classesMap.keys.forEach { tag ->
-            val classesList = classesMap[tag]
-            writer.append("${PH}private static final Class<?>[] ${getConstantsName(tag)} = new Class[] {").append("\n")
-            classesList?.forEach { clazz ->
-                writer.append("${PH}${PH}$clazz").append(",").append("\n")
-            }
-            writer.append("${PH}};").append("\n")
-            writer.append("\n")
-        }
+        writer.append("public final class ${Constants.CLASS_NAME} {\n")
     }
 
     private fun writePrivateConstructor() {
-        writer.append("${PH}private ${Constants.CLASS_NAME}() {}").append("\n")
+        writer.append("${PH}private ${Constants.CLASS_NAME}() {}\n")
     }
 
-    private fun writeGetter(classesMap: MutableMap<String, MutableList<String>>) {
+    private fun writeClassesGetter(classesMap: MutableMap<String, MutableList<String>>) {
         writer.append("\n")
-        writer.append("${PH}public static Class<?>[] ${Constants.GETTER_METHOD_NAME}(final String tag) {").append("\n")
-        writer.append("${PH}${PH}final Class<?>[] classesArray;").append("\n")
-        writer.append("${PH}${PH}switch(tag) {").append("\n")
+        writer.append("${PH}public static Class<?>[] ${Constants.GET_CLASS_METHOD_NAME}(final String tag) {\n")
+        writer.append("${PH}${PH}final Class<?>[] classesArray;\n")
+        writer.append("${PH}${PH}switch(tag) {\n")
         classesMap.keys.forEach { tag ->
-            writer.append("${PH}${PH}${PH}case \"$tag\":").append("\n")
-            writer.append("${PH}${PH}${PH}${PH}classesArray = ${getConstantsName(tag)};").append("\n")
-            writer.append("${PH}${PH}${PH}${PH}break;").append("\n")
+            val classesList = classesMap[tag]
+            writer.append("${PH}${PH}${PH}case \"$tag\":\n")
+            writer.append("${PH}${PH}${PH}${PH}classesArray = new Class<?>[] {\n")
+            classesList?.forEach { clazz ->
+                writer.append("${PH}${PH}${PH}${PH}${PH}$clazz,\n")
+            }
+            writer.append("${PH}${PH}${PH}${PH}};\n")
+            writer.append("${PH}${PH}${PH}${PH}break;\n")
         }
-        writer.append("${PH}${PH}${PH}default:").append("\n")
-        writer.append("${PH}${PH}${PH}${PH}classesArray = new Class<?>[0];").append("\n")
-        writer.append("${PH}${PH}${PH}${PH}break;").append("\n")
-        writer.append("${PH}${PH}}").append("\n")
-        writer.append("${PH}${PH}return classesArray;").append("\n")
-        writer.append("${PH}}").append("\n")
+        writer.append("${PH}${PH}${PH}default:\n")
+        writer.append("${PH}${PH}${PH}${PH}classesArray = new Class<?>[0];\n")
+        writer.append("${PH}${PH}${PH}${PH}break;\n")
+        writer.append("${PH}${PH}}\n")
+        writer.append("${PH}${PH}return classesArray;\n")
+        writer.append("${PH}}\n")
+    }
+
+    private fun writeInstancesGetter(classesMap: MutableMap<String, MutableList<String>>) {
+        writer.append("\n")
+        writer.append("${PH}public static <T> T[] ${Constants.GET_INSTANCE_METHOD_NAME}(final String tag, final Class<T> instanceClass) {\n")
+        writer.append("${PH}${PH}final T[] instancesArray;\n")
+        writer.append("${PH}${PH}switch(tag) {\n")
+        classesMap.keys.forEach { tag ->
+            val classesList = classesMap[tag]
+            writer.append("${PH}${PH}${PH}case \"$tag\":\n")
+            writer.append("${PH}${PH}${PH}${PH}instancesArray = (T[]) new Object[] {\n")
+            classesList?.forEach { clazz ->
+                writer.append("${PH}${PH}${PH}${PH}${PH}new ${clazz.replace(".class", "")}(),\n")
+            }
+            writer.append("${PH}${PH}${PH}${PH}};\n")
+            writer.append("${PH}${PH}${PH}${PH}break;\n")
+        }
+        writer.append("${PH}${PH}${PH}default:\n")
+        writer.append("${PH}${PH}${PH}${PH}instancesArray = (T[]) new Object[0];\n")
+        writer.append("${PH}${PH}${PH}${PH}break;\n")
+        writer.append("${PH}${PH}}\n")
+        writer.append("${PH}${PH}return instancesArray;\n")
+        writer.append("${PH}}\n")
     }
 
     private fun writeClassEnding() {
         writer.append("}")
-    }
-
-    private fun getConstantsName(tag: String): String {
-        return "CLASSES_${tag.uppercase()}"
     }
 
     private fun printProcessorLog(logContent: String) {
