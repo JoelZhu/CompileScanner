@@ -43,7 +43,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private String printHumanLifeInADayByInstances() {
         final StringBuilder stringBuilder = new StringBuilder();
-        final ICommand[] commands = Scanner.getAnnotatedInstances("", ICommand.class);
+        final ICommand[] commands = Scanner.getAnnotatedInstances(ICommand.class);
         for (final ICommand command : commands) {
             stringBuilder.append(command.execute()).append("\n");
         }

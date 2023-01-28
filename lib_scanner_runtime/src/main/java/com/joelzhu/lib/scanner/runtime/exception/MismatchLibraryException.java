@@ -1,13 +1,14 @@
 package com.joelzhu.lib.scanner.runtime.exception;
 
 /**
- * Library's implements failed.
+ * The two libraries' version mismatch.
  *
  * @author JoelZhu
  * @since 2023-01-27
  */
 public final class MismatchLibraryException extends RuntimeException {
     public MismatchLibraryException() {
-        super("Implement library failed, check your environment please.");
+        super("Library mismatch, check scanner's annotation and runtime library please, " +
+            "must make the two library's version equal.");
     }
 }

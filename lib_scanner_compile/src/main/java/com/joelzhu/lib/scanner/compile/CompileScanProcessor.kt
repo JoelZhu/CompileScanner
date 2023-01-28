@@ -28,6 +28,8 @@ class CompileScanProcessor : AbstractProcessor() {
 
     private lateinit var writer: Writer
 
+    private lateinit var scannedClasses: MutableMap<String, MutableList<String>>
+
     override fun init(processingEnv: ProcessingEnvironment?) {
         super.init(processingEnv)
         printProcessorLog("Initializing...")
@@ -47,15 +49,16 @@ class CompileScanProcessor : AbstractProcessor() {
         }
 
         printProcessorLog("Processing...")
-        val classesMap = mutableMapOf<String, MutableList<String>>()
-        scanAnnotatedClasses(env, classesMap)
+        scannedClasses = mutableMapOf()
+        scanAnnotatedClasses(env)
 
+        // To write down the code
+        openWriteStream()
         try {
-            openWriteStream()
             writeClassDeclaration()
             writePrivateConstructor()
-            writeClassesGetter(classesMap)
-            writeInstancesGetter(classesMap)
+            writeClassesGetter()
+            writeInstancesGetter()
             writeClassEnding()
         } catch (exception: IOException) {
             printProcessorError("Write file got exception: " + exception.message)
@@ -85,41 +88,46 @@ class CompileScanProcessor : AbstractProcessor() {
         }
     }
 
-    private fun scanAnnotatedClasses(env: RoundEnvironment?, classesMap: MutableMap<String, MutableList<String>>) {
+    private fun scanAnnotatedClasses(env: RoundEnvironment?) {
         env?.getElementsAnnotatedWith(CompileScan::class.java)?.forEach { element ->
             val compileScan = element.getAnnotation(CompileScan::class.java)
-            val className = "${element.enclosingElement}.${element.simpleName}.class"
-            var classesList = classesMap[compileScan.tag]
-            if (classesList == null) {
-                classesList = mutableListOf()
+            val className = "${element.enclosingElement}.${element.simpleName}"
+
+            // Put the class into map.
+            var classesWithTag = scannedClasses[compileScan.tag]
+            if (classesWithTag == null) {
+                classesWithTag = mutableListOf()
             }
-            classesList.add(className)
-            classesMap[compileScan.tag] = classesList
-            printProcessorLog("Find annotated class: $className, it's tag: $compileScan.tag")
+            classesWithTag.add(className)
+            scannedClasses[compileScan.tag] = classesWithTag
+            printProcessorLog("Find annotated class: $className, it's tag: ${compileScan.tag}")
         }
     }
 
+    @kotlin.jvm.Throws(IOException::class)
     private fun writeClassDeclaration() {
         writer.append("package ${Constants.CLASS_PACKAGE};\n")
         writer.append("\n")
         writer.append("public final class ${Constants.CLASS_NAME} {\n")
     }
 
+    @kotlin.jvm.Throws(IOException::class)
     private fun writePrivateConstructor() {
         writer.append("${PH}private ${Constants.CLASS_NAME}() {}\n")
     }
 
-    private fun writeClassesGetter(classesMap: MutableMap<String, MutableList<String>>) {
+    @kotlin.jvm.Throws(IOException::class)
+    private fun writeClassesGetter() {
         writer.append("\n")
         writer.append("${PH}public static Class<?>[] ${Constants.GET_CLASS_METHOD_NAME}(final String tag) {\n")
         writer.append("${PH}${PH}final Class<?>[] classesArray;\n")
         writer.append("${PH}${PH}switch(tag) {\n")
-        classesMap.keys.forEach { tag ->
-            val classesList = classesMap[tag]
+        scannedClasses.keys.forEach { tag ->
+            val classesList = scannedClasses[tag]
             writer.append("${PH}${PH}${PH}case \"$tag\":\n")
             writer.append("${PH}${PH}${PH}${PH}classesArray = new Class<?>[] {\n")
-            classesList?.forEach { clazz ->
-                writer.append("${PH}${PH}${PH}${PH}${PH}$clazz,\n")
+            classesList?.forEach { className ->
+                writer.append("${PH}${PH}${PH}${PH}${PH}$className.class,\n")
             }
             writer.append("${PH}${PH}${PH}${PH}};\n")
             writer.append("${PH}${PH}${PH}${PH}break;\n")
@@ -132,29 +140,31 @@ class CompileScanProcessor : AbstractProcessor() {
         writer.append("${PH}}\n")
     }
 
-    private fun writeInstancesGetter(classesMap: MutableMap<String, MutableList<String>>) {
+    @kotlin.jvm.Throws(IOException::class)
+    private fun writeInstancesGetter() {
         writer.append("\n")
-        writer.append("${PH}public static <T> T[] ${Constants.GET_INSTANCE_METHOD_NAME}(final String tag, final Class<T> instanceClass) {\n")
-        writer.append("${PH}${PH}final T[] instancesArray;\n")
+        writer.append("${PH}public static Object[] ${Constants.GET_INSTANCE_METHOD_NAME}(final String tag) {\n")
+        writer.append("${PH}${PH}final Object[] instancesArray;\n")
         writer.append("${PH}${PH}switch(tag) {\n")
-        classesMap.keys.forEach { tag ->
-            val classesList = classesMap[tag]
+        scannedClasses.keys.forEach { tag ->
+            val classesList = scannedClasses[tag]
             writer.append("${PH}${PH}${PH}case \"$tag\":\n")
-            writer.append("${PH}${PH}${PH}${PH}instancesArray = (T[]) new Object[] {\n")
-            classesList?.forEach { clazz ->
-                writer.append("${PH}${PH}${PH}${PH}${PH}new ${clazz.replace(".class", "")}(),\n")
+            writer.append("${PH}${PH}${PH}${PH}instancesArray = new Object[] {\n")
+            classesList?.forEach { className ->
+                writer.append("${PH}${PH}${PH}${PH}${PH}new $className(),\n")
             }
             writer.append("${PH}${PH}${PH}${PH}};\n")
             writer.append("${PH}${PH}${PH}${PH}break;\n")
         }
         writer.append("${PH}${PH}${PH}default:\n")
-        writer.append("${PH}${PH}${PH}${PH}instancesArray = (T[]) new Object[0];\n")
+        writer.append("${PH}${PH}${PH}${PH}instancesArray = new Object[0];\n")
         writer.append("${PH}${PH}${PH}${PH}break;\n")
         writer.append("${PH}${PH}}\n")
         writer.append("${PH}${PH}return instancesArray;\n")
         writer.append("${PH}}\n")
     }
 
+    @kotlin.jvm.Throws(IOException::class)
     private fun writeClassEnding() {
         writer.append("}")
     }
