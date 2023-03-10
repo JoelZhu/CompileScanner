@@ -26,9 +26,11 @@ class CompileScanProcessor : AbstractProcessor() {
         const val PH = "    "
     }
 
-    private lateinit var writer: Writer
+    private var scannedClasses: MutableMap<String, MutableMap<String, Int>> = mutableMapOf()
 
-    private lateinit var scannedClasses: MutableMap<String, MutableList<String>>
+    private var sortedClasses: MutableMap<String, MutableList<String>> = mutableMapOf()
+
+    private lateinit var writer: Writer
 
     override fun init(processingEnv: ProcessingEnvironment?) {
         super.init(processingEnv)
@@ -49,8 +51,8 @@ class CompileScanProcessor : AbstractProcessor() {
         }
 
         printProcessorLog("Processing...")
-        scannedClasses = mutableMapOf()
         scanAnnotatedClasses(env)
+        sortAnnotatedClasses()
 
         // To write down the code
         openWriteStream()
@@ -96,11 +98,21 @@ class CompileScanProcessor : AbstractProcessor() {
             // Put the class into map.
             var classesWithTag = scannedClasses[compileScan.tag]
             if (classesWithTag == null) {
-                classesWithTag = mutableListOf()
+                classesWithTag = mutableMapOf()
             }
-            classesWithTag.add(className)
+            classesWithTag[className] = compileScan.priority
             scannedClasses[compileScan.tag] = classesWithTag
-            printProcessorLog("Find annotated class: $className, it's tag: ${compileScan.tag}")
+            printProcessorLog("Find annotated class: $className, it's tag: ${compileScan.tag}, priority: ${compileScan.priority}")
+        }
+    }
+
+    private fun sortAnnotatedClasses() {
+        scannedClasses.keys.forEach { tag ->
+            val classPriorityMap = scannedClasses[tag]
+            val sortedMap = classPriorityMap?.toSortedMap(compareBy { classPriorityMap[it] })
+            val sortedList = mutableListOf<String>()
+            sortedMap?.keys?.forEach { sortedList.add(it) }
+            sortedClasses[tag] = sortedList
         }
     }
 
@@ -122,8 +134,8 @@ class CompileScanProcessor : AbstractProcessor() {
         writer.append("${PH}public static Class<?>[] ${Constants.GET_CLASS_METHOD_NAME}(final String tag) {\n")
         writer.append("${PH}${PH}final Class<?>[] classesArray;\n")
         writer.append("${PH}${PH}switch(tag) {\n")
-        scannedClasses.keys.forEach { tag ->
-            val classesList = scannedClasses[tag]
+        sortedClasses.keys.forEach { tag ->
+            val classesList = sortedClasses[tag]
             writer.append("${PH}${PH}${PH}case \"$tag\":\n")
             writer.append("${PH}${PH}${PH}${PH}classesArray = new Class<?>[] {\n")
             classesList?.forEach { className ->
@@ -146,8 +158,8 @@ class CompileScanProcessor : AbstractProcessor() {
         writer.append("${PH}public static Object[] ${Constants.GET_INSTANCE_METHOD_NAME}(final String tag) {\n")
         writer.append("${PH}${PH}final Object[] instancesArray;\n")
         writer.append("${PH}${PH}switch(tag) {\n")
-        scannedClasses.keys.forEach { tag ->
-            val classesList = scannedClasses[tag]
+        sortedClasses.keys.forEach { tag ->
+            val classesList = sortedClasses[tag]
             writer.append("${PH}${PH}${PH}case \"$tag\":\n")
             writer.append("${PH}${PH}${PH}${PH}instancesArray = new Object[] {\n")
             classesList?.forEach { className ->

@@ -4,12 +4,12 @@ import com.joelzhu.lib.scanner.annotation.CompileScan;
 import com.joelzhu.lib.scanner.java.ICommand;
 
 /**
- * Command: to eat.
+ * Command: human to eat.
  *
  * @author JoelZhu
  * @since 2023-01-27
  */
-@CompileScan
+@CompileScan(priority = 1)
 public final class CommandEat implements ICommand {
     @Override
     public String execute() {

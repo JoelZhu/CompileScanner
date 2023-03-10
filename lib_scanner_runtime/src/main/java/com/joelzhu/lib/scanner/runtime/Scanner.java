@@ -124,9 +124,12 @@ public final class Scanner {
         } catch (ClassNotFoundException | NoSuchMethodException exception) {
             Log.w(TAG, "Invoke method got exception: " + exception.getMessage());
             throw new ImplementFailureException();
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException exception) {
+        } catch (IllegalAccessException | IllegalArgumentException exception) {
             Log.w(TAG, "Invoke method got exception: " + exception.getMessage());
             throw new MismatchLibraryException();
+        } catch (InvocationTargetException exception) {
+            Log.e(TAG, "Invoke method got exception: " + exception.getMessage());
+            throw new RuntimeException(exception.getTargetException());
         }
         return instances;
     }
