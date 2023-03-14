@@ -1,0 +1,43 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+apply from: '../base_android.gradle'
+
+android {
+    namespace 'com.joelzhu.lib.scanner.kotlin'
+
+    defaultConfig {
+        applicationId "com.joelzhu.lib.scanner.kotlin"
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Joel CompileScan
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        appModule: 'true'
+                ]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation "io.github.joelzhu:scanner-runtime:${VERSION_NAME}"
+    kapt "io.github.joelzhu:scanner-compile:${VERSION_NAME}"
+}

@@ -13,6 +13,6 @@ import com.joelzhu.lib.scanner.java.ICommand;
 public final class CommandSleep implements ICommand {
     @Override
     public String execute() {
-        return "Sleeping...";
+        return "Sleeping... By default, priority = 10";
     }
 }

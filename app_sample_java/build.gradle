@@ -10,6 +10,17 @@ android {
         applicationId "com.joelzhu.lib.scanner.java"
         versionCode 1
         versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Joel CompileScan
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        appModule: 'true'
+                ]
+            }
+        }
     }
 
     buildTypes {

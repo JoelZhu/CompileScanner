@@ -13,6 +13,6 @@ import com.joelzhu.lib.scanner.java.ICommand;
 public final class CommandEat implements ICommand {
     @Override
     public String execute() {
-        return "Eating...";
+        return "Eating... By default, priority = 1";
     }
 }

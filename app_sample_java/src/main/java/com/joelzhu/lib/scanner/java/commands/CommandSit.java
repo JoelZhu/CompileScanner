@@ -13,6 +13,6 @@ import com.joelzhu.lib.scanner.java.ICommand;
 public final class CommandSit implements ICommand {
     @Override
     public String execute() {
-        return "Sitting...";
+        return "Sitting... By default, priority = 2";
     }
 }

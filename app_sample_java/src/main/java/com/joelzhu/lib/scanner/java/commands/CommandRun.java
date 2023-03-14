@@ -13,6 +13,6 @@ import com.joelzhu.lib.scanner.java.ICommand;
 public final class CommandRun implements ICommand {
     @Override
     public String execute() {
-        return "Running...";
+        return "Running... By default, priority = 4";
     }
 }

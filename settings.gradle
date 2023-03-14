@@ -1,6 +1,11 @@
 rootProject.name = "CompileScanner"
 
 include ':app_sample_java'
+include ':app_sample_kotlin'
+include ':app_sample_multimodule_app'
+include ':app_sample_multimodule_lib0'
+include ':app_sample_multimodule_lib1'
+include ':app_sample_multimodule_lib2'
 
 include ':lib_scanner_annotation'
 include ':lib_scanner_compile'

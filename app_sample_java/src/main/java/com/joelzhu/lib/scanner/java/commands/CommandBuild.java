@@ -14,6 +14,6 @@ import com.joelzhu.lib.scanner.java.utils.Constants;
 public final class CommandBuild implements ICommand {
     @Override
     public String execute() {
-        return "Building...";
+        return "Building... By man, priority = 2";
     }
 }

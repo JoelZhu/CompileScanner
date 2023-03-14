@@ -14,6 +14,6 @@ import com.joelzhu.lib.scanner.java.utils.Constants;
 public final class CommandDressUp implements ICommand {
     @Override
     public String execute() {
-        return "Dressing up...";
+        return "Dressing up... By woman, priority = 1";
     }
 }

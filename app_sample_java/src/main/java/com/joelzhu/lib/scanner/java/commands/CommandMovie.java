@@ -14,6 +14,6 @@ import com.joelzhu.lib.scanner.java.utils.Constants;
 public final class CommandMovie implements ICommand {
     @Override
     public String execute() {
-        return "Watching movie...";
+        return "Watching movie... By woman, priority = 3";
     }
 }

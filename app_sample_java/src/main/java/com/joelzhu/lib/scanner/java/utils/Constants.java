@@ -3,7 +3,7 @@ package com.joelzhu.lib.scanner.java.utils;
 /**
  * [Description here].
  *
- * @author zhuqian
+ * @author JoelZhu
  * @since 2023-03-10
  */
 public final class Constants {

@@ -14,6 +14,6 @@ import com.joelzhu.lib.scanner.java.utils.Constants;
 public final class CommandWork implements ICommand {
     @Override
     public String execute() {
-        return "Working...";
+        return "Working... By man, priority = 1";
     }
 }

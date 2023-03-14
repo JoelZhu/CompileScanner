@@ -5,7 +5,7 @@ import android.util.Log;
 import com.joelzhu.lib.scanner.annotation.CompileScan;
 import com.joelzhu.lib.scanner.annotation.Constants;
 import com.joelzhu.lib.scanner.runtime.exception.ImplementFailureException;
-import com.joelzhu.lib.scanner.runtime.exception.MismatchLibraryException;
+import com.joelzhu.lib.scanner.runtime.exception.GenerateFileFailedException;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -80,7 +80,7 @@ public final class Scanner {
             throw new ImplementFailureException();
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException exception) {
             Log.w(TAG, "Invoke method got exception: " + exception.getMessage());
-            throw new MismatchLibraryException();
+            throw new GenerateFileFailedException();
         }
         return classes == null ? new Class[0] : classes;
     }
@@ -126,7 +126,7 @@ public final class Scanner {
             throw new ImplementFailureException();
         } catch (IllegalAccessException | IllegalArgumentException exception) {
             Log.w(TAG, "Invoke method got exception: " + exception.getMessage());
-            throw new MismatchLibraryException();
+            throw new GenerateFileFailedException();
         } catch (InvocationTargetException exception) {
             Log.e(TAG, "Invoke method got exception: " + exception.getMessage());
             throw new RuntimeException(exception.getTargetException());

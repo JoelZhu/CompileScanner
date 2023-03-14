@@ -6,6 +6,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.joelzhu.lib.scanner.java.utils.Constants;
 import com.joelzhu.lib.scanner.runtime.Scanner;
 
 /**
@@ -19,31 +20,32 @@ public final class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ((TextView) findViewById(R.id.tvContentClasses)).setText(printHumanLifeInADayByClasses());
-        ((TextView) findViewById(R.id.tvContentInstances)).setText(printHumanLifeInADayByInstances());
+        ((TextView) findViewById(R.id.tvHumanDoing)).setText(printHumanDoing());
+        ((TextView) findViewById(R.id.tvManDoing)).setText(printManDoing());
+        ((TextView) findViewById(R.id.tvWomanDoing)).setText(printWomanDoing());
     }
 
-    private String printHumanLifeInADayByClasses() {
+    private String printHumanDoing() {
         final StringBuilder stringBuilder = new StringBuilder();
-        final Class<?>[] classes = Scanner.getAnnotatedClasses();
-        for (final Class<?> clazz : classes) {
-            if (!ICommand.class.isAssignableFrom(clazz)) {
-                continue;
-            }
-
-            try {
-                final ICommand command = (ICommand) clazz.newInstance();
-                stringBuilder.append(command.execute()).append("\n");
-            } catch (IllegalAccessException | InstantiationException exception) {
-                exception.printStackTrace();
-            }
+        final ICommand[] commands = Scanner.getAnnotatedInstances(ICommand.class);
+        for (final ICommand command : commands) {
+            stringBuilder.append(command.execute()).append("\n");
         }
         return stringBuilder.toString();
     }
 
-    private String printHumanLifeInADayByInstances() {
+    private String printManDoing() {
         final StringBuilder stringBuilder = new StringBuilder();
-        final ICommand[] commands = Scanner.getAnnotatedInstances(ICommand.class);
+        final ICommand[] commands = Scanner.getAnnotatedInstances(Constants.TAG_MAN, ICommand.class);
+        for (final ICommand command : commands) {
+            stringBuilder.append(command.execute()).append("\n");
+        }
+        return stringBuilder.toString();
+    }
+
+    private String printWomanDoing() {
+        final StringBuilder stringBuilder = new StringBuilder();
+        final ICommand[] commands = Scanner.getAnnotatedInstances(Constants.TAG_WOMAN, ICommand.class);
         for (final ICommand command : commands) {
             stringBuilder.append(command.execute()).append("\n");
         }
