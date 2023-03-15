@@ -10,7 +10,7 @@ class Constants {
     companion object {
         const val CLASS_PACKAGE = "com.joelzhu.lib.scanner"
 
-        const val CLASS_NAME = "JoelCompileScanner"
+        const val CLASS_NAME = "CompileScanner"
 
         const val GET_CLASS_METHOD_NAME = "getAnnotatedClasses"
 

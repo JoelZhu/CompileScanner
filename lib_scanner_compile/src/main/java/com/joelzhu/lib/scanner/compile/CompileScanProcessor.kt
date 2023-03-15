@@ -24,7 +24,9 @@ class CompileScanProcessor : AbstractProcessor() {
 
         const val SPLIT_SYMBOL = ":"
 
-        const val CACHE_FILE = "cacheFile"
+        const val CACHE_FILE_DIRECTORY = "build"
+
+        const val CACHE_FILE = "scanner.build.cache"
     }
 
     private var scannedClasses: MutableMap<String, MutableMap<String, Int>> = mutableMapOf()
@@ -158,7 +160,7 @@ class CompileScanProcessor : AbstractProcessor() {
         var writer: OutputStreamWriter? = null
 
         try {
-            val cacheFile = File(CACHE_FILE)
+            val cacheFile = File(getCacheFilePath())
             if (!cacheFile.exists()) {
                 cacheFile.createNewFile()
             }
@@ -196,7 +198,7 @@ class CompileScanProcessor : AbstractProcessor() {
         scannedClasses.clear()
 
         var reader: BufferedReader? = null
-        val fileReader = FileReader(CACHE_FILE)
+        val fileReader = FileReader(getCacheFilePath())
         try {
             reader = BufferedReader(fileReader)
             var readString: String?
@@ -264,8 +266,8 @@ class CompileScanProcessor : AbstractProcessor() {
     }
 
     private fun toDeleteCacheFile() {
-        // To delete the caching file
-        val cacheFile = File(CACHE_FILE)
+        // To delete the cache file
+        val cacheFile = File(getCacheFilePath())
         val deleteResult = cacheFile.delete()
         printProcessorLog("Delete cache file result: $deleteResult.")
     }
@@ -355,6 +357,10 @@ class CompileScanProcessor : AbstractProcessor() {
 
     private fun toCacheInFileString(classTag: String, className: String, priority: Int): String {
         return "$classTag$SPLIT_SYMBOL$className$SPLIT_SYMBOL$priority"
+    }
+
+    private fun getCacheFilePath(): String {
+        return "$CACHE_FILE_DIRECTORY${File.separator}$CACHE_FILE"
     }
 
     private fun printProcessorLog(logContent: String) {
