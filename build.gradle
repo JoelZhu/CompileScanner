@@ -1,10 +1,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 allprojects {
     repositories {
-        maven{ url = "https://maven.aliyun.com/repository/public/" }
-        maven{ url = "https://maven.aliyun.com/repository/central" }
         google()
         mavenCentral()
+        maven{ url = "https://maven.aliyun.com/repository/public/" }
+        maven{ url = "https://maven.aliyun.com/repository/central" }
         mavenLocal()
     }
 
@@ -39,10 +39,10 @@ buildscript {
     project.ext.set("jetpacKtxVersion", '2.3.1')
 
     repositories {
-        maven{ url = "https://maven.aliyun.com/repository/public/" }
-        maven{ url = "https://maven.aliyun.com/repository/central" }
         google()
         mavenCentral()
+        maven{ url = "https://maven.aliyun.com/repository/public/" }
+        maven{ url = "https://maven.aliyun.com/repository/central" }
         mavenLocal()
     }
     dependencies {
