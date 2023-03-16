@@ -32,7 +32,7 @@ dependencies {
 ```
 
 **Important!!  
-Only implement is not enough, please read the notice below, there are some different compile options to add in different situations.**
+Only implement is not enough, please read the content below, there are some different compile options to add in different situations.**
 
 Quick guide: <a href="#only-an-application-module">Only an application module</a> | <a href="#implemented-library-modules-with-compilescan">Implemented library module(s) with ```@CompileScan```</a> | <a href="#description-of-compile-options">Description of compile options</a>
 
