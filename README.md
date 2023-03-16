@@ -8,7 +8,7 @@ Classes scanner for Android applications, which supply interfaces to get annotat
 ![last commit](https://img.shields.io/github/last-commit/JoelZhu/CompileScanner?color=pink&label=commited&style=for-the-badge)
 
 ### ✨ Overall
-<a href="https://github.com/JoelZhu/CompileScanner/README.md#%EF%B8%8F-deploy">Deploy</a> | <a href="https://github.com/JoelZhu/CompileScanner/README.md#%EF%B8%8F-usage">Usage</a>
+<a href="#%EF%B8%8F-deploy">Deploy</a> | <a href="#%EF%B8%8F-usage">Usage</a>
 
 ### 🛠️ Deploy
 Deploy the library use the dependencies below:
@@ -34,7 +34,7 @@ dependencies {
 **Important!!  
 Only implement is not enough, please read the notice below, there are some different compile options to add in different situations.**
 
-Quick guide: <a href="https://github.com/JoelZhu/CompileScanner/README.md#only-an-application-module">Only an application module</a> | <a href="https://github.com/JoelZhu/CompileScanner/README.md#with-library-modules">With library module(s)</a> | <a href="https://github.com/JoelZhu/CompileScanner/README.md#description-of-compile-options">Description of compile options</a>
+Quick guide: <a href="#only-an-application-module">Only an application module</a> | <a href="#with-library-modules">With library module(s)</a> | <a href="#description-of-compile-options">Description of compile options</a>
 
 #### Only an application module
 If you are only an application module exists, without any library modules to implement, write down the code into application module's ```build.gradle```
