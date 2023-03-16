@@ -34,7 +34,7 @@ dependencies {
 **Important!!  
 Only implement is not enough, please read the notice below, there are some different compile options to add in different situations.**
 
-Quick guide: <a href="#only-an-application-module">Only an application module</a> | <a href="#with-library-modules">With library module(s)</a> | <a href="#description-of-compile-options">Description of compile options</a>
+Quick guide: <a href="#only-an-application-module">Only an application module</a> | <a href="#with-library-modules">Implemented library module(s) with ```@CompileScan```</a> | <a href="#description-of-compile-options">Description of compile options</a>
 
 #### Only an application module
 If you are only an application module exists, without any library modules to implement, write down the code into application module's ```build.gradle```
@@ -54,7 +54,7 @@ android {
 }
 ```
 
-#### With library module(s)
+#### Implemented library module(s) with ```@CompileScan```
 ##### Application module without ```@CompileScan``` in it
 If you are using Android library module(s) in your project, you should specify it in compile options, which also defined into application module's ```build.gradle```
 ```
