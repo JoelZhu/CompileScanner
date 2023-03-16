@@ -8,7 +8,7 @@ Classes scanner for Android applications, which supply interfaces to get annotat
 ![last commit](https://img.shields.io/github/last-commit/JoelZhu/CompileScanner?color=pink&label=commited&style=for-the-badge)
 
 ### ✨ Overall
-<a href="#%EF%B8%8F-deploy">Deploy</a> | <a href="#%EF%B8%8F-usage">Usage</a>
+<a href="#%EF%B8%8F-deploy">Deploy</a> | <a href="#%EF%B8%8F-usage">Usage</a> | Problems(To do)
 
 ### 🛠️ Deploy
 Deploy the library use the dependencies below:
@@ -106,9 +106,9 @@ public class ExampleClass implements IExample {
     ...
 }
 ```
-Then, you can get all of those annotated classes by: ```Scanner.getAnnotatedInstances(IExample.class)```, and you will get an array typed by```IExample.class```
+Then, you can get all of those annotated classes by: ```Scanner.getAnnotatedInstances(IExample.class)```, and you will get an array of instances typed by```IExample.class```
 
 Some advanced usage below:
-* You can add a string to mark them with different tags, such as: ```@CompileScan(tag = "Class1")```. Then, through method: ```Scanner.getAnnotatedInstances("Class1", XXX.class)``` to acquire those annotated classes
+* You can add a string to mark them with different tags, such as: ```@CompileScan(tag = "Class1")```. Then, through method: ```Scanner.getAnnotatedInstances("Class1", XXX.class)``` to acquire those annotated classes' instances
 * You can specify those classes' priority, like: ```@CompileScan(priority = 2)```. Then, this class will be arranged at the second place if ```priority = 1``` exists, if not, this class will still placed at the first place
 > For more examples, see the code in the project. [Java Example](https://github.com/JoelZhu/CompileScanner/tree/main/app_sample_java) | [Kotlin Example](https://github.com/JoelZhu/CompileScanner/tree/main/app_sample_kotlin) | [Multi Modules Usage Example](https://github.com/JoelZhu/CompileScanner/tree/main/app_sample_multimodule_app)
