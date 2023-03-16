@@ -8,7 +8,7 @@ Classes scanner for Android applications, which supply interfaces to get annotat
 ![last commit](https://img.shields.io/github/last-commit/JoelZhu/CompileScanner?color=pink&label=commited&style=for-the-badge)
 
 ### ✨ Overall
-<a href="#%EF%B8%8F-deploy">Deploy</a> | <a href="#%EF%B8%8F-usage">Usage</a> | Problems(To do)
+<a href="#%EF%B8%8F-deploy">Deploy</a> | <a href="#%EF%B8%8F-usage">Usage</a> | Troubles(To do)
 
 ### 🛠️ Deploy
 Deploy the library use the dependencies below:
