@@ -52,7 +52,10 @@ buildscript {
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
         // AAR发布插件
-        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.18.0'
+        classpath "com.vanniktech:gradle-maven-publish-plugin:0.18.0"
+
+        // Compile scanner
+        classpath "io.github.joelzhu:scanner-plugin:${VERSION_NAME}"
     }
 }
 

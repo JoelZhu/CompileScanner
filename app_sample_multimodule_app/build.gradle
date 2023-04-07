@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
+    id 'com.joelzhu.scanner'
 }
 apply from: '../base_android.gradle'
 
@@ -14,17 +14,6 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        // Joel CompileScan
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = [
-                        appModule     : 'true',
-                        isMultiModule : 'true',
-                        withAnnotation: 'true'
-                ]
-            }
-        }
     }
 
     buildTypes {
@@ -32,6 +21,13 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    buildFeatures {
+        dataBinding {
+            enabled true
+        }
+        viewBinding true
     }
 
     kotlinOptions {
@@ -43,6 +39,4 @@ dependencies {
     implementation project(':app_sample_multimodule_lib0')
     implementation project(':app_sample_multimodule_lib1')
     implementation project(':app_sample_multimodule_lib2')
-
-    kapt "io.github.joelzhu:scanner-compile:${VERSION_NAME}"
 }

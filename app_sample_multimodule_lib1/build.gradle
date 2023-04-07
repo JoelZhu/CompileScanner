@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
 }
 apply from: '../base_android.gradle'
 
@@ -27,5 +26,4 @@ android {
 
 dependencies {
     implementation project(':app_sample_multimodule_lib0')
-    kapt "io.github.joelzhu:scanner-compile:${VERSION_NAME}"
 }

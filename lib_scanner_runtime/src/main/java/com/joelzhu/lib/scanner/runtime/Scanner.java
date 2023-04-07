@@ -3,9 +3,8 @@ package com.joelzhu.lib.scanner.runtime;
 import android.util.Log;
 
 import com.joelzhu.lib.scanner.annotation.CompileScan;
-import com.joelzhu.lib.scanner.annotation.Constants;
-import com.joelzhu.lib.scanner.runtime.exception.GenerateFileFailedException;
-import com.joelzhu.lib.scanner.runtime.exception.ImplementFailureException;
+import com.joelzhu.lib.scanner.annotation.ImplConstants;
+import com.joelzhu.lib.scanner.runtime.core.Options;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -60,28 +59,29 @@ public final class Scanner {
      * @return the classes
      */
     public static Class<?>[] getAnnotatedClasses() {
-        return getAnnotatedClasses("");
+        return getAnnotatedClasses(new Options.Builder("").create());
     }
 
     /**
      * The same with the method {@link #getAnnotatedClasses()}, but the annotation is modified by specified tag.
      *
-     * @param tag The tag which specified when annotating the class.
+     * @param options
      * @return the classes
      */
-    public static Class<?>[] getAnnotatedClasses(final String tag) {
-        final Class<?>[] classes;
-        try {
-            final Method method = getSpecifiedMethod(Constants.GET_CLASS_METHOD_NAME, String.class);
-            classes = (Class<?>[]) method.invoke(null, tag);
-        } catch (IllegalAccessException | IllegalArgumentException exception) {
-            Log.w(TAG, "Invoke method got exception: " + exception.getMessage());
-            throw new ImplementFailureException();
-        } catch (InvocationTargetException exception) {
-            Log.e(TAG, "Invoke method got exception: " + exception.getMessage());
-            throw new RuntimeException(exception.getTargetException());
+    public static Class<?>[] getAnnotatedClasses(final Options options) {
+        final boolean withDefault = options.isWithDefault();
+        final String tag = options.getTag();
+        final Class<?>[] normalClasses = getNormalClasses(tag);
+        if (normalClasses != null) {
+            return normalClasses;
         }
-        return classes == null ? new Class[0] : classes;
+
+        if (!withDefault) {
+            // Current tag got empty classes from non-default list, and ignored default list by user.
+            return null;
+        } else {
+            return getDefaultClasses(tag);
+        }
     }
 
     /**
@@ -95,49 +95,84 @@ public final class Scanner {
      * @return Array of instances.
      */
     public static <T> T[] getAnnotatedInstances(final Class<T> instanceClass) {
-        return getAnnotatedInstances("", instanceClass);
+        return getAnnotatedInstances(new Options.Builder("").create(), instanceClass);
     }
 
     /**
      * The same with the method {@link #getAnnotatedInstances(Class)}, but the annotation is modified by specified tag.
      *
-     * @param tag           The tag which specified when annotating the class.
+     * @param options
      * @param instanceClass The instances' class.
      * @param <T>           The generic class.
      * @return Array of instances.
      */
-    public static <T> T[] getAnnotatedInstances(final String tag, final Class<T> instanceClass) {
-        final T[] instances;
-        try {
-            final Method method = getSpecifiedMethod(Constants.GET_INSTANCE_METHOD_NAME, String.class);
-            final Object[] invokedArray = (Object[]) method.invoke(null, tag);
-            if (invokedArray == null) {
-                throw new ImplementFailureException();
+    public static <T> T[] getAnnotatedInstances(final Options options, final Class<T> instanceClass) {
+        final boolean withDefault = options.isWithDefault();
+        final String tag = options.getTag();
+        final Class<?>[] normalClasses = getNormalClasses(tag);
+        if (normalClasses != null) {
+            return createInstanceByBeans(normalClasses, instanceClass);
+        }
+
+        if (!withDefault) {
+            // Current tag got empty classes from non-default list, and ignored default list by user.
+            return null;
+        } else {
+            return createInstanceByBeans(getDefaultClasses(tag), instanceClass);
+        }
+    }
+
+    private static Class<?>[] convertFromBeanToClass(final Class<?>[] beans) {
+        if (beans == null) {
+            return null;
+        }
+
+        final int arraySize = beans.length;
+        final Class<?>[] classes = new Class[arraySize];
+        System.arraycopy(beans, 0, classes, 0, arraySize);
+        return classes;
+    }
+
+    private static <T> T[] createInstanceByBeans(final Class<?>[] classes, final Class<T> instanceClass) {
+        if (classes == null) {
+            return null;
+        }
+
+        final int arraySize = classes.length;
+        final T[] instances = (T[]) Array.newInstance(instanceClass, arraySize);
+        for (int index = 0; index < arraySize; index++) {
+            try {
+                instances[index] = (T) classes[index].newInstance();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
             }
-            final int arrayLength = invokedArray.length;
-            instances = (T[]) Array.newInstance(instanceClass, arrayLength);
-            for (int index = 0; index < arrayLength; index++) {
-                instances[index] = (T) invokedArray[index];
-            }
-        } catch (IllegalAccessException | IllegalArgumentException exception) {
-            Log.w(TAG, "Invoke method got exception: " + exception.getMessage());
-            throw new ImplementFailureException();
-        } catch (InvocationTargetException exception) {
-            Log.e(TAG, "Invoke method got exception: " + exception.getMessage());
-            throw new RuntimeException(exception.getTargetException());
         }
         return instances;
     }
 
-    private static Method getSpecifiedMethod(final String methodName, Class<?>... parametersClass) {
-        final Method method;
+    private static Class<?>[] getNormalClasses(final String tag) {
+        return invokeGetter(ImplConstants.NORMAL_CLASS_GET, tag);
+    }
+
+    private static Class<?>[] getDefaultClasses(final String tag) {
+        return invokeGetter(ImplConstants.DEFAULT_CLASS_GET, tag);
+    }
+
+    private static Class<?>[] invokeGetter(final String getterMethodName, final String tag) {
+        Class<?>[] classes = null;
         try {
-            final Class<?> clazz = Class.forName(Constants.CLASS_PACKAGE + "." + Constants.CLASS_NAME);
-            method = clazz.getDeclaredMethod(methodName, parametersClass);
-        } catch (ClassNotFoundException | NoSuchMethodException exception) {
-            Log.w(TAG, "Invoke method got exception: " + exception.getMessage());
-            throw new GenerateFileFailedException();
+            final Class<?> scannerImpl = Class.forName(ImplConstants.IMPL_PACKAGE + "." + ImplConstants.IMPL_CLASS);
+            final Method getterMethod = scannerImpl.getDeclaredMethod(getterMethodName, String.class);
+            classes = (Class<?>[]) getterMethod.invoke(null, tag);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException exception) {
+            Log.e(TAG, "Invoke method got unexpected exception, " + exception.getMessage());
+            exception.printStackTrace();
+        } catch (InvocationTargetException exception) {
+            Log.e(TAG, "Invoke method failed, " + exception.getMessage());
+            exception.printStackTrace();
         }
-        return method;
+        return classes;
     }
 }

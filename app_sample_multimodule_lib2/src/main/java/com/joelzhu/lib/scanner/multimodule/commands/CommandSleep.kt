@@ -9,9 +9,9 @@ import com.joelzhu.lib.scanner.multimodule.ICommand
  * @author JoelZhu
  * @since 2023-03-13
  */
-@CompileScan(priority = 10)
+@CompileScan(priority = 4)
 class CommandSleep : ICommand {
     override fun execute(): String {
-        return "Sleeping... From module2, priority = 10"
+        return "Sleeping... From module2, priority = 4"
     }
 }

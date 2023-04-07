@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.joelzhu.scanner'
 }
 apply from: '../base_android.gradle'
 
@@ -12,15 +13,6 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        // Joel CompileScan
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = [
-                        appModule: 'true'
-                ]
-            }
-        }
     }
 
     buildTypes {
@@ -29,9 +21,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildFeatures {
+        dataBinding {
+            enabled true
+        }
+        viewBinding true
+    }
 }
 
 dependencies {
     implementation "io.github.joelzhu:scanner-runtime:${VERSION_NAME}"
-    annotationProcessor "io.github.joelzhu:scanner-compile:${VERSION_NAME}"
 }

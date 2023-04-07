@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.joelzhu.lib.scanner.java.utils.Constants;
 import com.joelzhu.lib.scanner.runtime.Scanner;
+import com.joelzhu.lib.scanner.runtime.core.Options;
 
 /**
  * MainActivity.
@@ -36,16 +37,17 @@ public final class MainActivity extends AppCompatActivity {
 
     private String printManDoing() {
         final StringBuilder stringBuilder = new StringBuilder();
-        final ICommand[] commands = Scanner.getAnnotatedInstances(Constants.TAG_MAN, ICommand.class);
+        final Options options = new Options.Builder(Constants.TAG_MAN).create();
+        final ICommand[] commands = Scanner.getAnnotatedInstances(options, ICommand.class);
         for (final ICommand command : commands) {
             stringBuilder.append(command.execute()).append("\n");
         }
         return stringBuilder.toString();
     }
-
     private String printWomanDoing() {
         final StringBuilder stringBuilder = new StringBuilder();
-        final ICommand[] commands = Scanner.getAnnotatedInstances(Constants.TAG_WOMAN, ICommand.class);
+        final Options options = new Options.Builder(Constants.TAG_WOMAN).create();
+        final ICommand[] commands = Scanner.getAnnotatedInstances(options, ICommand.class);
         for (final ICommand command : commands) {
             stringBuilder.append(command.execute()).append("\n");
         }

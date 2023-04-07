@@ -9,4 +9,5 @@ include ':app_sample_multimodule_lib2'
 
 include ':lib_scanner_annotation'
 include ':lib_scanner_compile'
+include ':lib_scanner_plugin'
 include ':lib_scanner_runtime'

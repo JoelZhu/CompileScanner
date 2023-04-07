@@ -15,7 +15,8 @@ import javax.tools.Diagnostic
  * @author JoelZhu
  * @since 2023-01-20
  */
-@SupportedOptions(Constants.OPTION_MODULE_IS_APP, Constants.OPTION_APP_WITH_ANNO)
+@SupportedOptions(Options.APP_MODULE, Options.WITH_ANNO, Options.IS_MULTI_MODULE,
+        Options.MODULE_PACKAGE, Options.ARTIFACT_TYPE)
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 class CompileScanProcessor : AbstractProcessor() {
     companion object {
@@ -23,8 +24,6 @@ class CompileScanProcessor : AbstractProcessor() {
         const val PH = "    "
 
         const val SPLIT_SYMBOL = ":"
-
-        const val CACHE_FILE_DIRECTORY = "build"
 
         const val CACHE_FILE = "scanner.build.cache"
     }
@@ -51,15 +50,28 @@ class CompileScanProcessor : AbstractProcessor() {
     }
 
     override fun getSupportedOptions(): MutableSet<String> {
-        return mutableSetOf(Constants.OPTION_MODULE_IS_APP, Constants.OPTION_APP_WITH_ANNO)
+        return mutableSetOf(Options.APP_MODULE, Options.WITH_ANNO, Options.IS_MULTI_MODULE,
+                Options.MODULE_PACKAGE, Options.ARTIFACT_TYPE)
     }
 
     override fun init(processingEnv: ProcessingEnvironment?) {
         super.init(processingEnv)
         printProcessorLog("Initializing...")
 
-        isAppModule = "true" == processingEnv?.options?.get(Constants.OPTION_MODULE_IS_APP)
-        appModuleWithAnno = "true" == processingEnv?.options?.get(Constants.OPTION_APP_WITH_ANNO)
+        var isAppModule = true
+        var modulePackage = ""
+        processingEnv?.options?.forEach { (key, value) ->
+            printProcessorLog("Option: $key - $value")
+            if (Options.ARTIFACT_TYPE == key && "LIBRARY" == value) {
+                isAppModule = false
+            } else if (Options.MODULE_PACKAGE == key) {
+                modulePackage = value
+            }
+        }
+
+        isAppModule = "true" == processingEnv?.options?.get(Options.APP_MODULE)
+        appModuleWithAnno = "true" == processingEnv?.options?.get(Options.WITH_ANNO)
+        printProcessorLog("ModulePackage: $modulePackage, isAppModule: $isAppModule")
 
         // Project has more than one modules, must use file to cache annotated classes
         if (!isAppModule) {
@@ -69,7 +81,7 @@ class CompileScanProcessor : AbstractProcessor() {
         }
 
         // Current module is application, will read parameter: isMultiModule
-        isMultiModule = "true" == processingEnv?.options?.get(Constants.OPTION_IS_MULTI_MODULE)
+        isMultiModule = "true" == processingEnv?.options?.get(Options.IS_MULTI_MODULE)
         if (!isMultiModule) {
             // Project only has one module, and that is application module, will cache in memory
             printProcessorLog("Project is not multi module, won't cache using file")
@@ -82,7 +94,7 @@ class CompileScanProcessor : AbstractProcessor() {
             // running into method: process
             printProcessorLog("Module is application, to generate file")
             // To generate code
-            startToGenerateCode(true)
+            startToGenerateCode()
         } else {
             // Application module still with annotation, should process it first, and generate code
             // after scanning classes in application module.
@@ -92,7 +104,7 @@ class CompileScanProcessor : AbstractProcessor() {
 
     override fun process(elements: MutableSet<out TypeElement>?, env: RoundEnvironment?): Boolean {
         if (elements == null || elements.size == 0) {
-            return true
+            return false
         }
 
         printProcessorLog("Processing... Is multi module: $isMultiModule.")
@@ -106,7 +118,7 @@ class CompileScanProcessor : AbstractProcessor() {
             // 1. Project only with one module;
             // 2. Project has more than one module, and current one is application module. And
             // application module still has annotated classes.
-            startToGenerateCode(isMultiModule)
+            startToGenerateCode()
         }
 
         printProcessorLog("Process ending...")
@@ -129,21 +141,11 @@ class CompileScanProcessor : AbstractProcessor() {
         }
     }
 
-    private fun startToGenerateCode(cacheUsingFile: Boolean = false) {
-        if (cacheUsingFile) {
-            // To un-parcel content from file to memory, if using file to cache
-            parseFromFile()
-        }
-
+    private fun startToGenerateCode() {
         // Sort the classes first
         sortAnnotatedClasses()
         // Generate code
         writeGeneratingCode()
-
-        if (cacheUsingFile) {
-            // To delete cache file
-            toDeleteCacheFile()
-        }
     }
 
     private fun cacheClassesIntoMemory(classTag: String, className: String, classPriority: Int) {
@@ -178,8 +180,10 @@ class CompileScanProcessor : AbstractProcessor() {
             writer.flush()
         } catch (exception: IOException) {
             printProcessorError("To cache into file got IO exception")
+            printException(exception)
         } catch (exception: FileNotFoundException) {
             printProcessorError("To cache into file, but didn't find the file")
+            printException(exception)
         } finally {
             try {
                 outputStream?.close()
@@ -194,9 +198,7 @@ class CompileScanProcessor : AbstractProcessor() {
         }
     }
 
-    private fun parseFromFile() {
-        scannedClasses.clear()
-
+    private fun readFromFile() {
         var reader: BufferedReader? = null
         val fileReader = FileReader(getCacheFilePath())
         try {
@@ -225,6 +227,7 @@ class CompileScanProcessor : AbstractProcessor() {
             }
         } catch (exception: FileNotFoundException) {
             printProcessorLog("Cache file not found, will generate nothing.")
+            printException(exception)
         } finally {
             try {
                 reader?.close()
@@ -260,6 +263,7 @@ class CompileScanProcessor : AbstractProcessor() {
             writeClassEnding()
         } catch (exception: IOException) {
             printProcessorError("Write file got exception: " + exception.message)
+            printException(exception)
         } finally {
             closeWriteStream()
         }
@@ -278,6 +282,7 @@ class CompileScanProcessor : AbstractProcessor() {
             writer = fileObject.openWriter()
         } catch (exception: IOException) {
             printProcessorError("Create file got exception: " + exception.message)
+            printException(exception)
         }
     }
 
@@ -287,6 +292,7 @@ class CompileScanProcessor : AbstractProcessor() {
             writer.close()
         } catch (exception: IOException) {
             printProcessorError("Close stream got exception: " + exception.message)
+            printException(exception)
         }
     }
 
@@ -360,7 +366,7 @@ class CompileScanProcessor : AbstractProcessor() {
     }
 
     private fun getCacheFilePath(): String {
-        return "$CACHE_FILE_DIRECTORY${File.separator}$CACHE_FILE"
+        return CACHE_FILE
     }
 
     private fun printProcessorLog(logContent: String) {
@@ -369,5 +375,13 @@ class CompileScanProcessor : AbstractProcessor() {
 
     private fun printProcessorError(logContent: String) {
         processingEnv?.messager?.printMessage(Diagnostic.Kind.ERROR, "CompileScanProcessor: $logContent")
+    }
+
+    private fun printException(exception: java.lang.Exception) {
+        val stackTraces = exception.stackTrace
+        printProcessorLog(exception.message!!)
+        stackTraces.forEach { stackTrace ->
+            printProcessorLog("${stackTrace.className}.${stackTrace.methodName}:${stackTrace.lineNumber}")
+        }
     }
 }
