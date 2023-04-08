@@ -14,7 +14,8 @@ import org.apache.commons.codec.digest.DigestUtils
 import java.io.File
 
 /**
- * [Description here].
+ * Transform of scanner.
+ * To scan classes which annotated with the annotation: [CompileScan][com.joelzhu.lib.scanner.annotation.CompileScan]
  *
  * @author JoelZhu
  * @since 2023-03-30
@@ -50,6 +51,7 @@ class ScannerTransform : Transform() {
 
         TransformHandler.onCompileStarted()
 
+        // Find out how many directory inputs with classes in it.
         LogUtil.printEmptyLine()
         LogUtil.printLog("To find all the directoryInputs which with class(es) in it.")
         scanDirInputWhichWithClasses(invocation)
@@ -99,10 +101,10 @@ class ScannerTransform : Transform() {
 
         var logContent = "List of dirInput(s) with class(es) in it: "
         TransformHandler.getDirectoryInputsWithClasses().forEachIndexed { index, dirInputName ->
-            if (index == 0) {
-                logContent += dirInputName
+            logContent += if (index == 0) {
+                dirInputName
             } else {
-                logContent += ", $dirInputName"
+                ", $dirInputName"
             }
         }
         LogUtil.printLog(logContent)

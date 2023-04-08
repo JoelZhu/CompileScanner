@@ -3,7 +3,7 @@ package com.joelzhu.lib.scanner.plugin.util
 /**
  * [Description here].
  *
- * @author zhuqian
+ * @author JoelZhu
  * @since 2023-04-06
  */
 object Constants {

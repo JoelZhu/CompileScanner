@@ -30,6 +30,10 @@ android {
     }
 }
 
+Scanner {
+    enableLog = true
+}
+
 dependencies {
     implementation "io.github.joelzhu:scanner-runtime:${VERSION_NAME}"
 }

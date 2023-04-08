@@ -44,6 +44,7 @@ public final class MainActivity extends AppCompatActivity {
         }
         return stringBuilder.toString();
     }
+
     private String printWomanDoing() {
         final StringBuilder stringBuilder = new StringBuilder();
         final Options options = new Options.Builder(Constants.TAG_WOMAN).create();

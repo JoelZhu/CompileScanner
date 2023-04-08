@@ -3,7 +3,7 @@ package com.joelzhu.lib.scanner.annotation
 /**
  * [Description here].
  *
- * @author zhuqian
+ * @author JoelZhu
  * @since 2023-04-07
  */
 object ImplConstants {

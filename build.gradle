@@ -3,8 +3,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven{ url = "https://maven.aliyun.com/repository/public/" }
-        maven{ url = "https://maven.aliyun.com/repository/central" }
+        maven { url = "https://maven.aliyun.com/repository/public/" }
+        maven { url = "https://maven.aliyun.com/repository/central" }
         mavenLocal()
     }
 
@@ -14,7 +14,7 @@ allprojects {
         }
     }
 
-    // 增加编译信息
+    // For more compile information
 //    gradle.projectsEvaluated {
 //        tasks.withType(JavaCompile) {
 //            options.compilerArgs << "-Xlint" << "-verbose" << "-XprintRounds" << "-XprintProcessorInfo" << "-Xmaxerrs" << "100000"
@@ -41,8 +41,8 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven{ url = "https://maven.aliyun.com/repository/public/" }
-        maven{ url = "https://maven.aliyun.com/repository/central" }
+        maven { url = "https://maven.aliyun.com/repository/public/" }
+        maven { url = "https://maven.aliyun.com/repository/central" }
         mavenLocal()
     }
     dependencies {
@@ -51,7 +51,8 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
-        // AAR发布插件
+
+        // Publish library&plugin
         classpath "com.vanniktech:gradle-maven-publish-plugin:0.18.0"
 
         // Compile scanner

@@ -35,6 +35,10 @@ android {
     }
 }
 
+Scanner {
+    enableLog = true
+}
+
 dependencies {
     implementation project(':app_sample_multimodule_lib0')
     implementation project(':app_sample_multimodule_lib1')

@@ -5,7 +5,7 @@ import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
 
 /**
- * [Description here].
+ * ClassVisitor which used to scan all the directory inputs, to find who has class(es) in it.
  *
  * @author JoelZhu
  * @since 2023-04-07
@@ -21,6 +21,7 @@ class DirectoryWithClassScanVisitor(classVisitor: ClassVisitor, private val dirI
         interfaces: Array<out String>?
     ) {
         super.visit(version, access, name, signature, superName, interfaces)
+        // Notify handler that, current dirInput has class(es).
         TransformHandler.updateDirectoryWithClasses(dirInputName)
     }
 }

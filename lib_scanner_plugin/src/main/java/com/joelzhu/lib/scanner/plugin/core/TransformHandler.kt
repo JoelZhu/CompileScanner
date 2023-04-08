@@ -64,12 +64,12 @@ object TransformHandler {
 
     fun scanDirectoryInputWhichWithClasses(dirInput: DirectoryInput, dirInputName: String) {
         FileUtils.getAllFiles(dirInput.file).forEach { file ->
-            if (!file.name.endsWith(".class")) {
-                return
+            if (isDirInputWithClasses(dirInputName)) {
+                return@scanDirectoryInputWhichWithClasses
             }
 
-            if (!file.exists()) {
-                return
+            if (!file.name.endsWith(".class") || !file.exists()) {
+                return@forEach
             }
 
             val inputStream = file.inputStream()
@@ -91,10 +91,10 @@ object TransformHandler {
     }
 
     fun updateDirectoryWithClasses(dirInputName: String) {
-        if (dirWithClass.contains(dirInputName)) {
+        if (isDirInputWithClasses(dirInputName)) {
             return
         }
-        
+
         LogUtil.printLog("Found class(es) in dirInput: $dirInputName.")
         dirWithClass.add(dirInputName)
     }
@@ -113,5 +113,9 @@ object TransformHandler {
         val writer = ClassWriter(reader, 0)
         val visitor = ClassScanVisitor(writer, fileAbsPath)
         reader.accept(visitor, ClassReader.EXPAND_FRAMES)
+    }
+
+    private fun isDirInputWithClasses(dirInputName: String): Boolean {
+        return dirWithClass.contains(dirInputName)
     }
 }
