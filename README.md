@@ -67,7 +67,7 @@ If you call the result like:
 final String tag = "ProxySample";
 final IProxy[] proxys = Scanner.getAnnotatedInstances(new Options.Builder(tag).create(), IProxy.class);
 ```
-you will got the array of ```Class``` which implements ```IProxy.class``` in it, as the ```proxys``` above.  
+you will got the instance array of ```IProxy.class```, as the ```proxys``` above.  
 And when you calling the ```IProxy```'s ```printName()```, like: ```proxys[0].printName();```, you will got the ```I'm B.``` returned back.  
 This may help you implement pattern - Proxy easily.
 
@@ -83,7 +83,7 @@ public class First {}
 public class Second {}
 ```
 And you will got the array, which put the ```First.class``` above the ```Second.class```.
-> Lager number has higher priority than the small one.
+> Lager number has lower priority than the small one.
 
 ##### Description of fields
 | Fields     | Description                                             |
@@ -107,4 +107,4 @@ Scanner {
 dependencies {
 }
 ```
-Then, when you compile failed, paste the full compile log into an new issue, and assign to me, i will try my best to resolve the problem as fast as you wish.
+Then, when the problem occured, paste the full compile log into an new issue, and assign to me, i will try my best to resolve the problem as fast as you wish.
