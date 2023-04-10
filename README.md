@@ -39,10 +39,10 @@ For simple usage, coding as below:
 @CompileScan
 public class ExampleClass implements IExample {}
 ```
-And you will got the classes or array of instances when you call ```Scanner```'s public method.
+And you will got the classes or array of instances when you call ```Scanner.class```'s public method.
 
 ##### Advanced usage: default
-You can use the ```Scanner``` as a compilation Proxy. For example, you have a class A as below:
+You can use the ```CompileScanner``` as a compilation Proxy. For example, you have a class A as below:
 ```java
 @CompileScan(tag = "ProxySample", isDefault = true)
 public class ProxyA implements IProxy {
