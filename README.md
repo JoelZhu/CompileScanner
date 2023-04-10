@@ -8,7 +8,7 @@ Classes scanner for Android applications, which supply interfaces to get annotat
 ![last commit](https://img.shields.io/github/last-commit/JoelZhu/CompileScanner?color=pink&label=commited&style=for-the-badge)
 
 ### ✨ Overall
-<a href="#%EF%B8%8F-deploy">Deploy</a> | <a href="#%EF%B8%8F-usage">Usage</a> | <a href="#-troubles">Troubles</a>
+<a href="#%EF%B8%8F-deploy">Deploy</a> | <a href="#%EF%B8%8F-usage">Usage</a> | <a href="#-troubles">Troubles</a> | <a href="https://github.com/JoelZhu/CompileScanner/blob/main/README_zh.md">中文版</a>
 
 ### 🛠️ Deploy
 To deploy the library as two steps:
@@ -28,7 +28,7 @@ dependencies {
     implementation "io.github.joelzhu:scanner-runtime:[RELEASED_VERSION]"
 }
 ```
-> There's no obvious differences between using Java and using Kotlin.
+> There's no obvious differences of deploying between using Java and using Kotlin.
 
 ### 🗒️ Usage
 Quick guide: <a href="#simple-usage">Simple usage</a> | <a href="#advanced-usage-default">Advanced usage: default</a> | <a href="#advanced-usage-priority">Advanced usage: priority</a> | <a href="#description-of-fields">Description of fields</a>
@@ -52,7 +52,7 @@ public class ProxyA implements IProxy {
     }
 }
 ```
-and you have another class B as below:
+and you have another class B:
 ```java
 @CompileScan(tag = "ProxySample")
 public class ProxyB implements IProxy {
@@ -62,13 +62,18 @@ public class ProxyB implements IProxy {
     }
 }
 ```
-If you call the method like: ```Scanner.getAnnotatedInstances(new Options.Builder("ProxySample").create(), IProxy.class);```, you will got the array of ```Class``` which implements ```IProxy.class``` in it.
-And when you calling the ```IProxy```'s ```printName()```, and you will got the ```I'm B.``` returned back.
+If you call the result like:
+```java
+final String tag = "ProxySample";
+final IProxy[] proxys = Scanner.getAnnotatedInstances(new Options.Builder(tag).create(), IProxy.class);
+```
+you will got the array of ```Class``` which implements ```IProxy.class``` in it, as the ```proxys``` above.  
+And when you calling the ```IProxy```'s ```printName()```, like: ```proxys[0].printName();```, you will got the ```I'm B.``` returned back.  
 This may help you implement pattern - Proxy easily.
 
 ##### Advanced usage: priority
-You can set priority of the classes with the same ```tag```. For example:
-If class ```First.class``` has the higher priority of the class ```Second.class```, you can annotated them as below:
+You can set priority of the classes with the same ```tag```.  
+For example: If class ```First.class``` has the higher priority of the class ```Second.class```, you can annotated them as below:
 ```java
 @CompileScan(priority = 1)
 public class First {}
