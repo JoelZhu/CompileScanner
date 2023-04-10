@@ -39,7 +39,7 @@ dependencies {
 @CompileScan
 public class ExampleClass implements IExample {}
 ```
-然后，你可以通过调用```Scanner.class```的公共方法，来获取类或者类实例。
+你有很多类似上面这种类，他们全都注解了 ```CompileScan```，然后，你不需要去一个一个调用他们，你完全可以很轻松的获取到他们。调用 ```Scanner.getAnnotatedClasses();``` 方法或者 ```Scanner.getAnnotatedInstances(IExample.class);``` 方法，你将会得到一堆类，或者是一堆 ```IExample``` 的实例化数组。
 
 ##### 高阶用法：default
 你可以使用 ```CompileScanner``` 作为一个编译时的代理。举个例子，你有如下的一个A类:
