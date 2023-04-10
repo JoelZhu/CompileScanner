@@ -31,7 +31,7 @@ dependencies {
 > 无论是使用Java还是Kotlin编程，部署上面没有明显的差异。
 
 ### 🗒️ 用法
-快速指南: <a href="#基础用法">基础用法</a> | <a href="#高阶用法default">高阶用法：default</a> | <a href="#高阶用法priority">高阶用法：priority</a> | <a href="#成员的说明">成员的说明</a>
+快速指南: <a href="#基础用法">基础用法</a> | <a href="#高阶用法default">高阶用法：default</a> | <a href="#高阶用法priority">高阶用法：priority</a> | <a href="#属性说明">属性说明</a>
 
 ##### 基础用法
 下面是基础的使用方式：
@@ -85,8 +85,8 @@ public class Second {}
 然后你会得到一个数组，数组里面会把 ```First.class``` 按照优先级排在 ```Second.class``` 前面。
 > 越大的数字，相比小的数字，拥有越低的优先级。
 
-##### 成员的说明
-| 成员       | 说明                     |
+##### 属性说明
+| 属性       | 说明                     |
 |------------|--------------------------|
 | tag        | 标记不同分组的类          |
 | isDefault  | 用于区分类是否为默认      |
