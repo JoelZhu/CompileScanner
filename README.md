@@ -39,7 +39,7 @@ For simple usage, coding as below:
 @CompileScan
 public class ExampleClass implements IExample {}
 ```
-And you will got the classes or array of instances when you call the ```Scanner.class```'s public method.
+And you have many classes which annotated with ```CompileScan``` as above, then, you don't have to call them one by one, you can acquire those classes esaily. Call the method ```Scanner.getAnnotatedClasses();``` or ```Scanner.getAnnotatedInstances(IExample.class);```, and you will got the classes or array of ```IExample``` instances back.
 
 ##### Advanced usage: default
 You can use the ```CompileScanner``` as a compilation Proxy. For example, you have a class A as below:
