@@ -78,7 +78,7 @@ public class First {}
 public class Second {}
 ```
 And you will got the array, which put the ```First.class``` above the ```Second.class```.
-> Bigger number has higher priority than the small one.
+> Lager number has higher priority than the small one.
 
 ##### Description of fields
 | Fields     | Description                                             |
