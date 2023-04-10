@@ -28,7 +28,7 @@ dependencies {
     implementation "io.github.joelzhu:scanner-runtime:[RELEASED_VERSION]"
 }
 ```
-> There's no obvious differences between using Java and Kotlin.
+> There's no obvious differences between using Java and using Kotlin.
 
 ### 🗒️ Usage
 Quick guide: <a href="#simple-usage">Simple usage</a> | <a href="#advanced-usage-default">Advanced usage: default</a> | <a href="#advanced-usage-priority">Advanced usage: priority</a> | <a href="#description-of-fields">Description of fields</a>
