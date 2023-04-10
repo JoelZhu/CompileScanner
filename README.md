@@ -39,7 +39,7 @@ For simple usage, coding as below:
 @CompileScan
 public class ExampleClass implements IExample {}
 ```
-And you will got the classes or array of instances when you call ```Scanner.class```'s public method.
+And you will got the classes or array of instances when you call the ```Scanner.class```'s public method.
 
 ##### Advanced usage: default
 You can use the ```CompileScanner``` as a compilation Proxy. For example, you have a class A as below:
@@ -63,12 +63,12 @@ public class ProxyB implements IProxy {
 }
 ```
 If you call the method like: ```Scanner.getAnnotatedInstances(new Options.Builder("ProxySample").create(), IProxy.class);```, you will got the array of ```Class``` which implements ```IProxy.class``` in it.
-And you call ```IProxy```'s ```printName()```, you will got the string: ```I'm B.```.
+And when you calling the ```IProxy```'s ```printName()```, and you will got the string ```I'm B.``` back.
 This may help you implement pattern - Proxy easily.
 
 ##### Advanced usage: priority
 You can set priority of the classes with the same ```tag```. For example:
-If class ```First``` has the higher priority of the class ```Second```, you can annotated them as below:
+If class ```First.class``` has the higher priority of the class ```Second.class```, you can annotated them as below:
 ```java
 @CompileScan(priority = 1)
 public class First {}
@@ -78,6 +78,7 @@ public class First {}
 public class Second {}
 ```
 And you will got the array, which put the ```First``` above the ```Second```.
+> Lower number has higher priority than higher number.
 
 ##### Description of fields
 | Fields     | Description                                             |
