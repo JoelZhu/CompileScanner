@@ -63,7 +63,7 @@ public class ProxyB implements IProxy {
 }
 ```
 If you call the method like: ```Scanner.getAnnotatedInstances(new Options.Builder("ProxySample").create(), IProxy.class);```, you will got the array of ```Class``` which implements ```IProxy.class``` in it.
-And when you calling the ```IProxy```'s ```printName()```, and you will got the string ```I'm B.``` back.
+And when you calling the ```IProxy```'s ```printName()```, and you will got the ```I'm B.``` returned back.
 This may help you implement pattern - Proxy easily.
 
 ##### Advanced usage: priority
@@ -77,8 +77,8 @@ public class First {}
 @CompileScan(priority = 2)
 public class Second {}
 ```
-And you will got the array, which put the ```First``` above the ```Second```.
-> Lower number has higher priority than higher number.
+And you will got the array, which put the ```First.class``` above the ```Second.class```.
+> Bigger number has higher priority than the small one.
 
 ##### Description of fields
 | Fields     | Description                                             |
