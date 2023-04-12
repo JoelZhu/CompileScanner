@@ -12,13 +12,13 @@ Classes scanner for Android applications, which supply interfaces to get annotat
 
 ### 🛠️ Deploy
 To deploy the library as two steps:
-1. declare in project's build.gradle as below:
+1. declare in project's ```build.gradle``` as below:
 ```groovy
 dependencies {
     classpath "io.github.joelzhu:scanner-plugin:[RELEASED_VERSION]"
 }
 ```
-2. declare in application's build.gradle as below:
+2. declare in application's ```build.gradle``` as below:
 ```groovy
 plugins {
     id 'com.joelzhu.scanner'
@@ -95,7 +95,7 @@ And you will got the array, which put the ```First.class``` above the ```Second.
 > For more examples, see the code in the project. [Java Example](https://github.com/JoelZhu/CompileScanner/tree/main/app_sample_java) | [Kotlin Example](https://github.com/JoelZhu/CompileScanner/tree/main/app_sample_kotlin) | [Multi Modules Usage Example](https://github.com/JoelZhu/CompileScanner/tree/main/app_sample_multimodule_app)
 
 ### ❗ Troubles
-If you got compile exceptions or something unexcepted, add the options below in application's build.gradle to open the compile log.
+If you got compile exceptions or something unexcepted, add the options below in application's ```build.gradle``` to open the compile log.
 ```groovy
 android {
 }
