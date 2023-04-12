@@ -12,7 +12,7 @@
 
 ### 🛠️ 部署
 分两步部署库：
-1. 在工程的```build.gradle```中如下声明：
+1. 在项目的```build.gradle```中如下声明：
 ```groovy
 dependencies {
     classpath "io.github.joelzhu:scanner-plugin:[RELEASED_VERSION]"
