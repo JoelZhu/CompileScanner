@@ -12,13 +12,13 @@
 
 ### 🛠️ 部署
 分两步部署库：
-1. 在工程的 build.gradle 中如下声明：
+1. 在工程的```build.gradle```中如下声明：
 ```groovy
 dependencies {
     classpath "io.github.joelzhu:scanner-plugin:[RELEASED_VERSION]"
 }
 ```
-2. 在app module的 build.gradle 中如下声明：
+2. 在application工程的```build.gradle```中如下声明：
 ```groovy
 plugins {
     id 'com.joelzhu.scanner'
@@ -95,7 +95,7 @@ public class Second {}
 > 更多的代码样例，参照 [Java样例](https://github.com/JoelZhu/CompileScanner/tree/main/app_sample_java) | [Kotlin样例](https://github.com/JoelZhu/CompileScanner/tree/main/app_sample_kotlin) | [多module样例](https://github.com/JoelZhu/CompileScanner/tree/main/app_sample_multimodule_app)
 
 ### ❗ 问题
-如果你遇到了编译错误，或者在使用过程中遇到了与期望不符的情况，在app module的 build.gradle 中添加如下代码，来打开日志。
+如果你遇到了编译错误，或者在使用过程中遇到了与期望不符的情况，在application工程的```build.gradle```中添加如下代码，来打开日志。
 ```groovy
 android {
 }
