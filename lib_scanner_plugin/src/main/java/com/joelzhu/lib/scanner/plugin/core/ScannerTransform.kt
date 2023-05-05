@@ -55,7 +55,6 @@ class ScannerTransform : Transform() {
         LogUtil.printEmptyLine()
         LogUtil.printLog("To find all the directoryInputs which with class(es) in it.")
         scanDirInputWhichWithClasses(invocation)
-        LogUtil.printEmptyLine()
 
         // To iterate each input, to find all the annotated classes.
         var dirInputsWithClasses: MutableSet<String>? =
@@ -82,7 +81,7 @@ class ScannerTransform : Transform() {
                     if (dirInputsWithClasses != null && dirInputsWithClasses!!.size == 0) {
                         LogUtil.printEmptyLine()
                         LogUtil.printLog("Ready to insert code.")
-                        TransformHandler.generateInjectingCode()
+                        TransformHandler.generateInjectingCode(dirInput.file.path)
                         dirInputsWithClasses = null
                     }
 
@@ -122,7 +121,7 @@ class ScannerTransform : Transform() {
             dirInput.scopes,
             Format.DIRECTORY
         )
-        LogUtil.printLog("To copy dir into file: ${destDirInput.path}.")
+        LogUtil.printLog("To copy dir: ${dirInput.file.path} into file: ${destDirInput.path}.")
         FileUtils.copyDirectory(dirInput.file, destDirInput)
     }
 

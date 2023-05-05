@@ -2,6 +2,7 @@ package com.joelzhu.lib.scanner.java.commands;
 
 import com.joelzhu.lib.scanner.annotation.CompileScan;
 import com.joelzhu.lib.scanner.java.ICommand;
+import com.joelzhu.lib.scanner.java.utils.Constants;
 
 /**
  * Command: human to run.
@@ -9,7 +10,7 @@ import com.joelzhu.lib.scanner.java.ICommand;
  * @author JoelZhu
  * @since 2023-01-27
  */
-@CompileScan(priority = 4)
+@CompileScan(group = Constants.GROUP_DAILY, priority = 4)
 public final class CommandRun implements ICommand {
     @Override
     public String execute() {

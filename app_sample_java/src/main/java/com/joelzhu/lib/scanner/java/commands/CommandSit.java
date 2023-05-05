@@ -2,6 +2,7 @@ package com.joelzhu.lib.scanner.java.commands;
 
 import com.joelzhu.lib.scanner.annotation.CompileScan;
 import com.joelzhu.lib.scanner.java.ICommand;
+import com.joelzhu.lib.scanner.java.utils.Constants;
 
 /**
  * Command: human to sit.
@@ -9,7 +10,7 @@ import com.joelzhu.lib.scanner.java.ICommand;
  * @author JoelZhu
  * @since 2023-01-27
  */
-@CompileScan(priority = 2)
+@CompileScan(group = Constants.GROUP_REST, priority = 2)
 public final class CommandSit implements ICommand {
     @Override
     public String execute() {

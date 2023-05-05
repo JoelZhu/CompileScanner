@@ -25,5 +25,5 @@ android {
 }
 
 dependencies {
-    api "io.github.joelzhu:scanner-runtime:${VERSION_NAME}"
+    api "io.github.joelzhu:scanner-runtime:${USING_VERSION_NAME}"
 }

@@ -1,7 +1,7 @@
 package com.joelzhu.lib.scanner.plugin.visitor
 
 import com.joelzhu.lib.scanner.annotation.CompileScan
-import com.joelzhu.lib.scanner.plugin.core.TransformHandler
+import com.joelzhu.lib.scanner.plugin.util.Constants
 import com.joelzhu.lib.scanner.plugin.util.LogUtil
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
@@ -13,10 +13,10 @@ import org.objectweb.asm.Opcodes
  * @author JoelZhu
  * @since 2023-03-30
  */
-class ClassScanVisitor(classVisitor: ClassVisitor, private val filePath: String?) :
-    ClassVisitor(Opcodes.ASM8, classVisitor) {
+class ClassScanVisitor(classVisitor: ClassVisitor) : ClassVisitor(Opcodes.ASM8, classVisitor) {
     private companion object {
-        val ANNOTATION_DESCRIPTOR = "L${CompileScan::class.java.name.replace(".", "/")};"
+        val ANNOTATION_DESCRIPTOR =
+            "L${CompileScan::class.java.name.replace(".", Constants.JAVA_SEPARATOR)};"
     }
 
     private var className: String? = null
@@ -33,12 +33,6 @@ class ClassScanVisitor(classVisitor: ClassVisitor, private val filePath: String?
         LogUtil.printLog("Scanning class: $name.")
         name?.let { className ->
             this.className = className
-            filePath?.let { filePath ->
-                TransformHandler.updateBuildPath(
-                    filePath.replace("/", "\\")
-                        .removeSuffix("${className.replace("/", "\\")}.class")
-                )
-            }
         }
     }
 

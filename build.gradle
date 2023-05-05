@@ -56,7 +56,7 @@ buildscript {
         classpath "com.vanniktech:gradle-maven-publish-plugin:0.18.0"
 
         // Compile scanner
-        classpath "io.github.joelzhu:scanner-plugin:${VERSION_NAME}"
+        classpath "io.github.joelzhu:scanner-plugin:${USING_VERSION_NAME}"
     }
 }
 

@@ -5,24 +5,22 @@ import com.android.build.api.transform.JarInput
 import com.android.utils.FileUtils
 import com.joelzhu.lib.scanner.annotation.ImplConstants
 import com.joelzhu.lib.scanner.plugin.util.LogUtil
-import com.joelzhu.lib.scanner.plugin.util.ScannerCache
 import com.joelzhu.lib.scanner.plugin.visitor.ClassScanVisitor
 import com.joelzhu.lib.scanner.plugin.visitor.DirectoryWithClassScanVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
+import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.jar.JarFile
 
 /**
- * [Description here].
+ * Handle to scan annotated classes, and generate method to acquire those classes.
  *
  * @author JoelZhu
  * @since 2023-04-04
  */
 object TransformHandler {
-    private var buildPath: String? = null
-
     private val dirWithClass = mutableSetOf<String>()
 
     fun onCompileStarted() {
@@ -38,7 +36,7 @@ object TransformHandler {
 
             val inputStream = originJarFile.getInputStream(originJarEntry)
             if (originJarEntry.name.endsWith(".class")) {
-                scanAnnotatedClasses(inputStream, null)
+                scanAnnotatedClasses(inputStream)
             }
             inputStream.close()
         }
@@ -51,13 +49,13 @@ object TransformHandler {
             }
 
             if (!file.exists()) {
-                LogUtil.printLog("To scan file not exists, file path: ${file.absolutePath}")
+                LogUtil.printLog("To scan file not exists, file path: ${file.path}.")
                 return
             }
 
             LogUtil.printLog("To scan file: ${file.path}.")
             val inputStream = file.inputStream()
-            scanAnnotatedClasses(inputStream, file.path)
+            scanAnnotatedClasses(inputStream)
             inputStream.close()
         }
     }
@@ -85,11 +83,6 @@ object TransformHandler {
         return dirWithClass
     }
 
-    fun updateBuildPath(buildPath: String) {
-        LogUtil.printLog("Update build path: $buildPath.")
-        this.buildPath = buildPath
-    }
-
     fun updateDirectoryWithClasses(dirInputName: String) {
         if (isDirInputWithClasses(dirInputName)) {
             return
@@ -99,19 +92,24 @@ object TransformHandler {
         dirWithClass.add(dirInputName)
     }
 
-    fun generateInjectingCode() {
-        buildPath?.let {
-            val outputStream = FileOutputStream("$it${ImplConstants.IMPL_CLASS}.class")
-            outputStream.write(ScannerImplDump.dump())
-            outputStream.flush()
-            outputStream.close()
+    fun generateInjectingCode(buildPath: String) {
+        val directoryPath = if (buildPath.endsWith(File.separator)) {
+            buildPath
+        } else {
+            "$buildPath${File.separator}"
         }
+        val outputPath = "$directoryPath${ImplConstants.IMPL_CLASS}.class"
+        LogUtil.printLog("To generate file: ${outputPath}.")
+        val outputStream = FileOutputStream(outputPath)
+        outputStream.write(ScannerImplCodeGenerator.generate())
+        outputStream.flush()
+        outputStream.close()
     }
 
-    private fun scanAnnotatedClasses(inputStream: InputStream, fileAbsPath: String?) {
+    private fun scanAnnotatedClasses(inputStream: InputStream) {
         val reader = ClassReader(inputStream)
         val writer = ClassWriter(reader, 0)
-        val visitor = ClassScanVisitor(writer, fileAbsPath)
+        val visitor = ClassScanVisitor(writer)
         reader.accept(visitor, ClassReader.EXPAND_FRAMES)
     }
 

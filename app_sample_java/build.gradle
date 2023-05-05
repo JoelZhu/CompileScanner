@@ -35,5 +35,5 @@ Scanner {
 }
 
 dependencies {
-    implementation "io.github.joelzhu:scanner-runtime:${VERSION_NAME}"
+    implementation "io.github.joelzhu:scanner-runtime:${USING_VERSION_NAME}"
 }

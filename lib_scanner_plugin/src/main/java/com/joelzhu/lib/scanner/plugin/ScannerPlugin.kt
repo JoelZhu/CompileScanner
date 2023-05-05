@@ -8,7 +8,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 /**
- * [Description here].
+ * Scanner plugin.
  *
  * @author JoelZhu
  * @since 2023-03-30

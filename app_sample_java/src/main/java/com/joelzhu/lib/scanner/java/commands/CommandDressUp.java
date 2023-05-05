@@ -10,7 +10,7 @@ import com.joelzhu.lib.scanner.java.utils.Constants;
  * @author JoelZhu
  * @since 2023-03-10
  */
-@CompileScan(tag = Constants.TAG_WOMAN, priority = 1)
+@CompileScan(tag = Constants.TAG_WOMAN, group = Constants.GROUP_DAILY, priority = 1)
 public final class CommandDressUp implements ICommand {
     @Override
     public String execute() {

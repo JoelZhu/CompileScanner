@@ -1,7 +1,7 @@
 package com.joelzhu.lib.scanner.annotation
 
 /**
- * [Description here].
+ * Constants of each names named in ```ScannerImpl.class```, include: package, class, getters.
  *
  * @author JoelZhu
  * @since 2023-04-07
@@ -11,7 +11,5 @@ object ImplConstants {
 
     const val IMPL_CLASS = "ScannerImpl"
 
-    const val NORMAL_CLASS_GET = "getNormalClasses"
-
-    const val DEFAULT_CLASS_GET = "getDefaultClasses"
+    const val CLASS_GET = "getClasses"
 }

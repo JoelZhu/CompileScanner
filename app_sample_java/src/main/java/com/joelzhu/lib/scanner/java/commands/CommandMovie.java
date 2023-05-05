@@ -10,7 +10,7 @@ import com.joelzhu.lib.scanner.java.utils.Constants;
  * @author JoelZhu
  * @since 2023-03-10
  */
-@CompileScan(tag = Constants.TAG_WOMAN, priority = 3)
+@CompileScan(tag = Constants.TAG_WOMAN, group = Constants.GROUP_REST, priority = 3)
 public final class CommandMovie implements ICommand {
     @Override
     public String execute() {
