@@ -1,14 +1,14 @@
 package com.joelzhu.lib.scanner.java;
 
+import com.joelzhu.lib.scanner.java.utils.Constants;
+import com.joelzhu.lib.scanner.runtime.Scanner;
+import com.joelzhu.lib.scanner.runtime.core.Options;
+
 import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.joelzhu.lib.scanner.java.utils.Constants;
-import com.joelzhu.lib.scanner.runtime.Scanner;
-import com.joelzhu.lib.scanner.runtime.core.Options;
 
 /**
  * MainActivity.

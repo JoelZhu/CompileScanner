@@ -1,9 +1,11 @@
 package com.joelzhu.lib.scanner.runtime.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.joelzhu.lib.scanner.annotation.CompileScan;
 import com.joelzhu.lib.scanner.runtime.Scanner;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -15,9 +17,9 @@ import android.util.Log;
 public final class Options {
     private static final String TAG = "CompileScan";
 
-    private String tag = "";
+    private final List<String> tags = new ArrayList<>();
 
-    private String group = "";
+    private final List<String> groups = new ArrayList<>();
 
     private boolean enableNullReturn = false;
 
@@ -46,7 +48,7 @@ public final class Options {
                 Log.e(TAG, "Already specified to list all tags, can't specify tag again.");
                 return this;
             }
-            options.tag = tag;
+            options.tags.add(tag);
             return this;
         }
 
@@ -60,7 +62,7 @@ public final class Options {
                 Log.e(TAG, "Already specified to list all groups, can't specify group again.");
                 return this;
             }
-            options.group = group;
+            options.groups.add(group);
             return this;
         }
 
@@ -81,7 +83,7 @@ public final class Options {
          * @return Builder
          */
         public Builder listAllTags() {
-            if (!TextUtils.isEmpty(options.tag)) {
+            if (!options.tags.isEmpty()) {
                 Log.w(TAG, "Already specified tag, this set will ignore the tag which specified before.");
             }
             options.listAllTags = true;
@@ -94,7 +96,7 @@ public final class Options {
          * @return Builder
          */
         public Builder listAllGroups() {
-            if (!TextUtils.isEmpty(options.group)) {
+            if (!options.groups.isEmpty()) {
                 Log.w(TAG, "Already specified group, this set will ignore the group which specified before.");
             }
             options.listAllGroups = true;
@@ -127,12 +129,12 @@ public final class Options {
         }
     }
 
-    public String getTag() {
-        return tag;
+    public List<String> getTags() {
+        return tags;
     }
 
-    public String getGroup() {
-        return group;
+    public List<String> getGroups() {
+        return groups;
     }
 
     public boolean isWithDefault() {

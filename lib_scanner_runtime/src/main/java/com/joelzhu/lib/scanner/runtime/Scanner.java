@@ -204,8 +204,8 @@ public final class Scanner {
     }
 
     private static boolean isLegal(final Options options, final ScannedClass scannedClass) {
-        if (options.getTag().equals(scannedClass.getTag()) || options.isListAllTags()) {
-            if (options.getGroup().equals(scannedClass.getGroup()) || options.isListAllGroups()) {
+        if (options.getTags().contains(scannedClass.getTag()) || options.isListAllTags()) {
+            if (options.getGroups().contains(scannedClass.getGroup()) || options.isListAllGroups()) {
                 return !scannedClass.isDefault() || options.isWithDefault();
             }
         }
