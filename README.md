@@ -31,7 +31,7 @@ dependencies {
 > There's no obvious differences of deploying between using Java and using Kotlin.
 
 ### 🗒️ Usage
-Quick guide: <a href="#simple-usage">Simple usage</a> | <a href="#advanced-usage-default">Advanced usage: default</a> | <a href="#advanced-usage-priority">Advanced usage: priority</a> | <a href="#description-of-fields">Description of fields</a>
+Quick guide: <a href="#simple-usage">Simple usage</a> | <a href="#advanced-usage-tag">Advanced usage: tag</a> | <a href="#advanced-usage-group">Advanced usage: group</a> | <a href="#advanced-usage-default">Advanced usage: default</a> | <a href="#advanced-usage-priority">Advanced usage: priority</a> | <a href="#description-of-fields">Description of fields</a>
 
 ##### Simple usage
 For simple usage, coding as below:
@@ -40,6 +40,34 @@ For simple usage, coding as below:
 public class ExampleClass implements IExample {}
 ```
 And you have many classes which annotated with ```CompileScan``` as above, then, you don't have to call them one by one, you can acquire those classes esaily. Call the method ```Scanner.getAnnotatedClasses();``` or ```Scanner.getAnnotatedInstances(IExample.class);```, and you will got the classes or array of ```IExample``` instances back.
+
+##### Advanced usage: tag
+If you want to mark each class by it's own attributes, ```tag``` may help you. For example, you have three classes as below:
+```java
+@CompileScan(tag = "A")
+public class ExampleAClass implements IExample {}
+```
+```java
+@CompileScan(tag = "B")
+public class ExampleBClass implements IExample {}
+```
+```java
+@CompileScan(tag = "C")
+public class ExampleCClass implements IExample {}
+```
+You may have ```ExampleAClass``` easily by calling like this: ```final IExample[] examples = Scanner.getAnnotatedInstances(new Options.Builder().tag("A").create(), IExample.class);```
+
+##### Advanced usage: group
+Consider only ```tag``` is not enough, we supply you another one: ```group```. If you have two classes, which both belonging to ```Life```, but you have to get different classes in different cases, you can differ them with ```group```, like:
+```java
+@CompileScan(tag = "Life", group = "Work")
+public class Work implements ILife {}
+```
+```java
+@CompileScan(tag = "Life", group = "Rest)
+public class Sleep implements ILife {}
+```
+And you can get classes which belonging to ```work``` by calling as ```final ILife[] works = Scanner.getAnnotatedInstances(new Options.Builder().tag("Life").group("Work").create(), ILife.class);```
 
 ##### Advanced usage: default
 You can use the ```CompileScanner``` as a compilation Proxy. For example, you have a class A as below:
@@ -88,7 +116,8 @@ And you will got the array, which put the ```First.class``` above the ```Second.
 ##### Description of fields
 | Fields     | Description                                             |
 |------------|---------------------------------------------------------|
-| tag        | Mark the annotated classes as different groups          |
+| tag        | Mark the annotated classes with different tags          |
+| group      | Mark the same tagged classes with different groups      |
 | isDefault  | Differ the classes with default one or not              |
 | priority   | Indicate the priority of each classes with the same tag |
 
