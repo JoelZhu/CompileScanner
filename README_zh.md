@@ -31,7 +31,7 @@ dependencies {
 > 无论是使用Java还是Kotlin编程，部署上面没有明显的差异。
 
 ### 🗒️ 用法
-快速指南: <a href="#基础用法">基础用法</a> | <a href="#高阶用法tag">高阶用法：tag</a> | <a href="#高阶用法group">高阶用法：group</a> | <a href="#高阶用法default">高阶用法：default</a> | <a href="#高阶用法priority">高阶用法：priority</a> | <a href="#属性说明">属性说明</a>
+快速指南: <a href="#基础用法">基础用法</a> | <a href="#高阶用法-tag">高阶用法：tag</a> | <a href="#高阶用法-group">高阶用法：group</a> | <a href="#高阶用法default">高阶用法：default</a> | <a href="#高阶用法priority">高阶用法：priority</a> | <a href="#属性说明">属性说明</a>
 
 ##### 基础用法
 下面是基础的使用方式：
