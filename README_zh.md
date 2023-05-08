@@ -31,7 +31,7 @@ dependencies {
 > 无论是使用Java还是Kotlin编程，部署上面没有明显的差异。
 
 ### 🗒️ 用法
-快速指南: <a href="#基础用法">基础用法</a> | <a href="#高阶用法default">高阶用法：default</a> | <a href="#高阶用法priority">高阶用法：priority</a> | <a href="#属性说明">属性说明</a>
+快速指南: <a href="#基础用法">基础用法</a> | <a href="#高阶用法tag">高阶用法：tag</a> | <a href="#高阶用法group">高阶用法：group</a> | <a href="#高阶用法default">高阶用法：default</a> | <a href="#高阶用法priority">高阶用法：priority</a> | <a href="#属性说明">属性说明</a>
 
 ##### 基础用法
 下面是基础的使用方式：
@@ -40,6 +40,34 @@ dependencies {
 public class ExampleClass implements IExample {}
 ```
 你有很多类似上面这种类，他们全都注解了 ```CompileScan```，然后，你不需要去一个一个调用他们，你完全可以很轻松的获取到他们。调用 ```Scanner.getAnnotatedClasses();``` 方法或者 ```Scanner.getAnnotatedInstances(IExample.class);``` 方法，你将会得到一堆类，或者是一堆 ```IExample``` 的实例化数组。
+
+##### 高阶用法: tag
+如果你想用类自有属性去标记这个类本身，那么你可以使用 ```tag``` 标记，比如说，你有三个类如下所示：
+```java
+@CompileScan(tag = "A")
+public class ExampleAClass implements IExample {}
+```
+```java
+@CompileScan(tag = "B")
+public class ExampleBClass implements IExample {}
+```
+```java
+@CompileScan(tag = "C")
+public class ExampleCClass implements IExample {}
+```
+通过调用：```final IExample[] examples = Scanner.getAnnotatedInstances(new Options.Builder().tag("A").create(), IExample.class);``` 方法，你可以很轻松的获得到 ```ExampleAClass```。
+
+##### 高阶用法: group
+考虑到单独一个 ```tag``` 可能无法满足需求，我们提供了另外一个属性： ```group``` 来帮助你更好地使用这个库。比如说你拥有两个类，他们都是属于 ```Life``` 的，但是你需要根据不同的使用场景来区分这两个类，那么你可以如下实现：
+```java
+@CompileScan(tag = "Life", group = "Work")
+public class Work implements ILife {}
+```
+```java
+@CompileScan(tag = "Life", group = "Rest)
+public class Sleep implements ILife {}
+```
+然后，你可以获取属于 ```work``` 属性的类，通过这种调用： ```final ILife[] works = Scanner.getAnnotatedInstances(new Options.Builder().tag("Life").group("Work").create(), ILife.class);``` 这个方法。
 
 ##### 高阶用法：default
 你可以使用 ```CompileScanner``` 作为一个编译时的代理。举个例子，你有如下的一个A类:
@@ -86,11 +114,12 @@ public class Second {}
 > 越大的数字，相比小数字而言，拥有越低的优先级。
 
 ##### 属性说明
-| 属性       | 说明                     |
-|------------|--------------------------|
-| tag        | 标记不同分组的类          |
-| isDefault  | 用于区分类是否为默认      |
-| priority   | 标记拥有相同tag的类优先级 |
+| 属性       | 说明                        |
+|------------|-----------------------------|
+| tag        | 拥有区分不同的类             |
+| group      | 用于区分相同tag类的不同属性  |
+| isDefault  | 用于区分类是否为默认         |
+| priority   | 标记拥有相同tag的类优先级    |
 
 > 更多的代码样例，参照 [Java样例](https://github.com/JoelZhu/CompileScanner/tree/main/app_sample_java) | [Kotlin样例](https://github.com/JoelZhu/CompileScanner/tree/main/app_sample_kotlin) | [多module样例](https://github.com/JoelZhu/CompileScanner/tree/main/app_sample_multimodule_app)
 
