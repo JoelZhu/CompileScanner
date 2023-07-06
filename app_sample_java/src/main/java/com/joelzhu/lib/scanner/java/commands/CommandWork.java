@@ -10,7 +10,7 @@ import com.joelzhu.lib.scanner.java.utils.Constants;
  * @author JoelZhu
  * @since 2023-03-10
  */
-@CompileScan(tag = Constants.TAG_MAN, group = Constants.GROUP_WORK, priority = 1)
+@CompileScan(category = Constants.TAG_MAN, priority = 1)
 public final class CommandWork implements ICommand {
     @Override
     public String execute() {

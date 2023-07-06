@@ -1,15 +1,17 @@
 package com.joelzhu.lib.scanner.plugin.util
 
 /**
- * [Description here].
+ * Log util.
  *
  * @author JoelZhu
  * @since 2023-04-03
  */
 object LogUtil {
-    const val LOG_TAG = "JoelCompile"
+    private const val LOG_TAG = "JoelCompile"
 
-    private var isPrintLog = true
+    private var isPrintLog = false
+
+    private var isPrintDebug = true
 
     fun adjustLogPrintPrivacy(isPrintLog: Boolean) {
         LogUtil.isPrintLog = isPrintLog
@@ -21,9 +23,25 @@ object LogUtil {
         }
     }
 
-    fun printLog(logContent: String) {
+    fun printImportant(logContent: String) {
+        println("> $LOG_TAG: $logContent")
+    }
+
+    fun printError(logContent: String) {
         if (isPrintLog) {
-            println("$LOG_TAG: $logContent")
+            System.err.println("> $LOG_TAG/Error: $logContent")
+        }
+    }
+
+    fun printInfo(logContent: String) {
+        if (isPrintLog) {
+            println("> $LOG_TAG/Info: $logContent")
+        }
+    }
+
+    fun printDebug(logContent: String) {
+        if (isPrintDebug) {
+            println("> $LOG_TAG/Debug: $logContent")
         }
     }
 }

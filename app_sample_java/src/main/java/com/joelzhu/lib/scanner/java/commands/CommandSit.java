@@ -10,7 +10,7 @@ import com.joelzhu.lib.scanner.java.utils.Constants;
  * @author JoelZhu
  * @since 2023-01-27
  */
-@CompileScan(group = Constants.GROUP_REST, priority = 2)
+@CompileScan(priority = 2)
 public final class CommandSit implements ICommand {
     @Override
     public String execute() {

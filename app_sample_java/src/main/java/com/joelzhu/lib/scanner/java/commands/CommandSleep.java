@@ -10,7 +10,7 @@ import com.joelzhu.lib.scanner.java.utils.Constants;
  * @author JoelZhu
  * @since 2023-01-27
  */
-@CompileScan(group = Constants.GROUP_REST, priority = 10)
+@CompileScan(priority = 10)
 public final class CommandSleep implements ICommand {
     @Override
     public String execute() {

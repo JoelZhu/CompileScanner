@@ -9,9 +9,10 @@ import com.android.build.api.transform.TransformInvocation
 import com.android.build.api.transform.TransformOutputProvider
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.android.utils.FileUtils
+import com.joelzhu.lib.scanner.plugin.code.cache.CacheHandler
+import com.joelzhu.lib.scanner.plugin.code.generator.CodeGenerator
 import com.joelzhu.lib.scanner.plugin.util.LogUtil
 import org.apache.commons.codec.digest.DigestUtils
-import java.io.File
 
 /**
  * Transform of scanner.
@@ -40,92 +41,38 @@ class ScannerTransform : Transform() {
     override fun transform(invocation: TransformInvocation?) {
         if (!isIncremental) {
             LogUtil.printEmptyLine()
-            LogUtil.printLog("Not incremental compile, to delete all provider output.")
+            LogUtil.printInfo("Not incremental compile, to delete all provider output.")
             invocation?.outputProvider?.deleteAll()
         }
 
         if (invocation == null) {
-            LogUtil.printLog("TransformInvocation is null, ignore transform.")
+            LogUtil.printError("TransformInvocation is null, ignore transform.")
             return
         }
 
-        TransformHandler.onCompileStarted()
+        // Start compile.
+        CacheHandler.initializeCompilation()
 
-        // Find out how many directory inputs with classes in it.
-        LogUtil.printEmptyLine()
-        LogUtil.printLog("To find all the directoryInputs which with class(es) in it.")
-        scanDirInputWhichWithClasses(invocation)
+        // Scan for finding inject class.
+        ScanHelper.toFindInjectPlace(invocation)
 
         // To iterate each input, to find all the annotated classes.
-        var dirInputsWithClasses: MutableSet<String>? =
-            TransformHandler.getDirectoryInputsWithClasses()
         invocation.outputProvider?.let { provider ->
-            invocation.inputs?.forEach { inputs ->
-                inputs.jarInputs.forEach { jarInput ->
-                    if (jarInput.scopes.contains(QualifiedContent.Scope.SUB_PROJECTS)) {
-                        // Only scan implementation project or scanner-runtime
-                        TransformHandler.scanJarInput(jarInput)
-                    }
+            ScanHelper.toScanAnnotatedClasses(invocation, { copyJarInput(provider, it) },
+                { copyDirInput(provider, it) })
 
-                    copyJarInput(provider, jarInput)
-                }
+            // Preparing data.
+            CodeGenerator.prepareData(CacheHandler.getCachedData())
 
-                inputs.directoryInputs.forEach { dirInput ->
-                    val dirInputName = dirInput.file.name
-                    dirInputsWithClasses?.remove(dirInputName)
-                    LogUtil.printEmptyLine()
-                    LogUtil.printLog("To scan the dirInput: $dirInputName.")
-                    TransformHandler.scanDirectoryInput(dirInput)
-
-                    // If the set is empty, means the code had already generated into the directory.
-                    if (dirInputsWithClasses != null && dirInputsWithClasses!!.size == 0) {
-                        LogUtil.printEmptyLine()
-                        LogUtil.printLog("Ready to insert code.")
-                        TransformHandler.generateInjectingCode(dirInput.file.path)
-                        dirInputsWithClasses = null
-                    }
-
-                    copyDirInput(provider, dirInput)
-                }
+            // To inject code in jarInput.
+            ScanHelper.generateInjectingCode()?.let {
+                LogUtil.printInfo("Generate finished, to copy jarInput.")
+                copyJarInput(provider, it)
             }
         }
-    }
-
-    private fun scanDirInputWhichWithClasses(invocation: TransformInvocation) {
-        invocation.inputs?.forEach { inputs ->
-            inputs.directoryInputs.forEach { dirInput ->
-                TransformHandler.scanDirectoryInputWhichWithClasses(dirInput, dirInput.file.name)
-            }
-        }
-
-        var logContent = "List of dirInput(s) with class(es) in it: "
-        TransformHandler.getDirectoryInputsWithClasses().forEachIndexed { index, dirInputName ->
-            logContent += if (index == 0) {
-                dirInputName
-            } else {
-                ", $dirInputName"
-            }
-        }
-        LogUtil.printLog(logContent)
     }
 
     private fun copyJarInput(provider: TransformOutputProvider, jarInput: JarInput) {
-        val destJarInput = getJarOutputFile(provider, jarInput)
-        FileUtils.copyFile(jarInput.file, destJarInput)
-    }
-
-    private fun copyDirInput(provider: TransformOutputProvider, dirInput: DirectoryInput) {
-        val destDirInput = provider.getContentLocation(
-            dirInput.name,
-            dirInput.contentTypes,
-            dirInput.scopes,
-            Format.DIRECTORY
-        )
-        LogUtil.printLog("To copy dir: ${dirInput.file.path} into file: ${destDirInput.path}.")
-        FileUtils.copyDirectory(dirInput.file, destDirInput)
-    }
-
-    private fun getJarOutputFile(provider: TransformOutputProvider, jarInput: JarInput): File {
         val destName = if (jarInput.name.endsWith(".jar")) {
             jarInput.name.substring(0, jarInput.name.length - 4)
         } else {
@@ -133,9 +80,16 @@ class ScannerTransform : Transform() {
         }
 
         val jarPathHex = DigestUtils.md5Hex(jarInput.file.absolutePath)
-        return provider.getContentLocation(
-            "${destName}_${jarPathHex}",
-            jarInput.contentTypes, jarInput.scopes, Format.JAR
-        )
+        FileUtils.copyFile(jarInput.file,
+            provider.getContentLocation("${destName}_${jarPathHex}", jarInput.contentTypes,
+                jarInput.scopes, Format.JAR))
+    }
+
+    private fun copyDirInput(provider: TransformOutputProvider, dirInput: DirectoryInput) {
+        val destDirInput =
+            provider.getContentLocation(dirInput.name, dirInput.contentTypes, dirInput.scopes,
+                Format.DIRECTORY)
+        LogUtil.printInfo("To copy dir: ${dirInput.file.path} into file: ${destDirInput.path}.")
+        FileUtils.copyDirectory(dirInput.file, destDirInput)
     }
 }

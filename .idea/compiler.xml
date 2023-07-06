@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="1.8">
+      <module name="CompileScanner.lib_scanner_runtime_test" target="11" />
+      <module name="JoelHelper.lib_compiler_runtime" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

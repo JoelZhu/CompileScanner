@@ -10,7 +10,7 @@ import com.joelzhu.lib.scanner.java.utils.Constants;
  * @author JoelZhu
  * @since 2023-01-27
  */
-@CompileScan(group = Constants.GROUP_DAILY, priority = 1)
+@CompileScan(priority = 1)
 public final class CommandEat implements ICommand {
     @Override
     public String execute() {

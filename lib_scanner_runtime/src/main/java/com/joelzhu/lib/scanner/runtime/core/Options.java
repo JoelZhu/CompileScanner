@@ -6,8 +6,6 @@ import java.util.List;
 import com.joelzhu.lib.scanner.annotation.CompileScan;
 import com.joelzhu.lib.scanner.runtime.Scanner;
 
-import android.util.Log;
-
 /**
  * Options for {@link Scanner} to get classes.
  *
@@ -15,21 +13,13 @@ import android.util.Log;
  * @since 2023-04-06
  */
 public final class Options {
-    private static final String TAG = "CompileScan";
-
-    private final List<String> tags = new ArrayList<>();
-
-    private final List<String> groups = new ArrayList<>();
+    private final List<Integer> categories = new ArrayList<>();
 
     private boolean enableNullReturn = false;
 
-    private boolean listAllTags = false;
-
-    private boolean listAllGroups = false;
+    private boolean listAllCategories = true;
 
     private boolean withDefault = false;
-
-    private boolean enableRuntime = true;
 
     public static class Builder {
         private final Options options;
@@ -39,30 +29,31 @@ public final class Options {
         }
 
         /**
-         * To specify the tag when get annotated classes.
-         *
-         * @return Builder.
+         * {@link Scanner} will use {@link int} to represent tag id. This method won't support anymore.
+         * <p>
+         * Use {@link #category(int)} instead.
          */
+        @Deprecated
         public Builder tag(final String tag) {
-            if (options.listAllTags) {
-                Log.e(TAG, "Already specified to list all tags, can't specify tag again.");
-                return this;
-            }
-            options.tags.add(tag);
             return this;
         }
 
         /**
-         * To specify the group when get annotated classes.
+         * To specify the tag when get annotated classes.
          *
          * @return Builder.
          */
+        public Builder category(final int category) {
+            options.listAllCategories = false;
+            options.categories.add(category);
+            return this;
+        }
+
+        /**
+         * {@link Scanner} will never support group any more.
+         */
+        @Deprecated
         public Builder group(final String group) {
-            if (options.listAllGroups) {
-                Log.e(TAG, "Already specified to list all groups, can't specify group again.");
-                return this;
-            }
-            options.groups.add(group);
             return this;
         }
 
@@ -78,28 +69,19 @@ public final class Options {
         }
 
         /**
-         * To list all tags when get annotated classes. This will ignore the specified of {@link CompileScan#tag()}.
-         *
-         * @return Builder
+         * {@link Scanner} no need to set all tags options for getting all tags, don't specify tag will works instead.
          */
+        @Deprecated
         public Builder listAllTags() {
-            if (!options.tags.isEmpty()) {
-                Log.w(TAG, "Already specified tag, this set will ignore the tag which specified before.");
-            }
-            options.listAllTags = true;
             return this;
         }
 
         /**
-         * To list all groups when get annotated classes. This will ignore the specified of {@link CompileScan#group()}.
-         *
-         * @return Builder
+         * {@link Scanner} no need to set all groups options for getting all groups, don't specify group will works
+         * instead.
          */
+        @Deprecated
         public Builder listAllGroups() {
-            if (!options.groups.isEmpty()) {
-                Log.w(TAG, "Already specified group, this set will ignore the group which specified before.");
-            }
-            options.listAllGroups = true;
             return this;
         }
 
@@ -119,8 +101,8 @@ public final class Options {
          *
          * @return Builder.
          */
+        @Deprecated
         public Builder disableRuntime() {
-            options.enableRuntime = false;
             return this;
         }
 
@@ -129,31 +111,21 @@ public final class Options {
         }
     }
 
-    public List<String> getTags() {
-        return tags;
+    private Options() {}
+
+    public List<Integer> getCategories() {
+        return categories;
     }
 
-    public List<String> getGroups() {
-        return groups;
-    }
-
-    public boolean isWithDefault() {
+    public boolean withDefault() {
         return withDefault;
     }
 
-    public boolean isListAllTags() {
-        return listAllTags;
-    }
-
-    public boolean isListAllGroups() {
-        return listAllGroups;
+    public boolean isListAllCategories() {
+        return listAllCategories;
     }
 
     public boolean isEnableNullReturn() {
         return enableNullReturn;
-    }
-
-    public boolean isEnableRuntime() {
-        return enableRuntime;
     }
 }

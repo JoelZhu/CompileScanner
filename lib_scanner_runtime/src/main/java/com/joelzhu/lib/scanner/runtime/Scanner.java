@@ -1,16 +1,10 @@
 package com.joelzhu.lib.scanner.runtime;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.joelzhu.lib.scanner.annotation.CompileScan;
-import com.joelzhu.lib.scanner.annotation.ImplConstants;
-import com.joelzhu.lib.scanner.annotation.ScannedClass;
 import com.joelzhu.lib.scanner.runtime.core.Options;
-import com.joelzhu.lib.scanner.runtime.exception.GenerateFileFailedException;
+import com.joelzhu.lib.scanner.runtime.core.ScannerImpl;
 
 import android.util.Log;
 
@@ -58,11 +52,14 @@ public final class Scanner {
     private Scanner() {}
 
     /**
-     * Get array of the classes annotated with {@link CompileScan}. And the parameters are set as below: 1.
-     * {@link Options#tag} is empty string, which is: <code>""</code>; 2. {@link Options#withDefault} is true, which
-     * means you will got default class if there's no other empty tag's class exists; 3.
-     * {@link Options#enableNullReturn} is true, means you will got <code>null</code> if the default one still not
-     * exists at the situation above. See {@link #getAnnotatedClasses(Options)} for more information.
+     * Get array of the classes annotated with {@link CompileScan}. And the parameters are set as below: <br>
+     * 1. {@link Options#tag} is empty string, which is: <code>""</code>;<br>
+     * 2. {@link Options#withDefault} is true, which means you will got default class if there's no other empty tag's
+     * class exists;<br>
+     * 3. {@link Options#enableNullReturn} is true, means you will got <code>null</code> if the default one still not
+     * exists at the situation above.
+     * <p>
+     * See {@link #getAnnotatedClasses(Options)} for more information.
      *
      * @return The classes which annotated with {@link CompileScan}.
      */
@@ -72,27 +69,32 @@ public final class Scanner {
 
     /**
      * Get array of the classes annotated with {@link CompileScan}. As it should be, the classes' annotation fields are
-     * declared as below: 1. Declared the tag as the field {@link Options#tag} in <code>options</code>; 2. Declared the
-     * default or not as the field {@link Options#withDefault} in <code>options</code>; And if the class which filtered
-     * by above conditions do not exists, you will got a null array back. But if you don't want to see the
-     * <code>null</code>, you can set the field {@link Options#enableNullReturn} as false to avoid the situation, and
-     * you will got a empty array instead.
+     * declared as below:<br>
+     * 1. Declared the tag as the field {@link Options#tag} in <code>options</code>;<br>
+     * 2. Declared the default or not as the field {@link Options#withDefault} in <code>options</code>; And if the class
+     * which filtered by above conditions do not exists, you will got a null array back. But if you don't want to see
+     * the <code>null</code>, you can set the field {@link Options#enableNullReturn} as false to avoid the situation,
+     * and you will got a empty array instead.
      *
      * @param options The options, indicate the scanner, what kind of classes to be returned. For more information,
      *        please refers for {@link Options}.
      * @return The classes which annotated with {@link CompileScan}.
      */
     public static Class<?>[] getAnnotatedClasses(final Options options) {
-        final Class<?>[] result = getClassesInternal(options);
+        final Class<?>[] result = ScannerImpl.getClasses(options.getCategories(), options.withDefault());
         return handleReturning(options, result);
     }
 
     /**
      * Get array of the instances which created by the classes, annotated with {@link CompileScan}. And the parameters
-     * are set as below: 1. {@link Options#tag} is empty string, which is: <code>""</code>; 2.
-     * {@link Options#withDefault} is true, which means you will got default class if there's no other empty tag's class
-     * exists; 3. {@link Options#enableNullReturn} is true, means you will got <code>null</code> if the default one
-     * still not exists at the situation above. See {@link #getAnnotatedInstances(Options, Class)} for more information.
+     * are set as below:<br>
+     * 1. {@link Options#tag} is empty string, which is: <code>""</code>;<br>
+     * 2. {@link Options#withDefault} is true, which means you will got default class if there's no other empty tag's
+     * class exists;<br>
+     * 3. {@link Options#enableNullReturn} is true, means you will got <code>null</code> if the default one still not
+     * exists at the situation above.
+     * <p>
+     * See {@link #getAnnotatedInstances(Options, Class)} for more information.
      * <p>
      * <b>!! Attention: </b>, the annotated class must have non-parameter public constructor, otherwise, the creation of
      * the class will failed, and you will got a runtime exception.
@@ -107,11 +109,12 @@ public final class Scanner {
 
     /**
      * Get array of the instances which created by the classes, annotated with {@link CompileScan}. As it should be, the
-     * classes' annotation fields are declared as below: 1. Declared the tag as the field {@link Options#tag} in
-     * <code>options</code>; 2. Declared the default or not as the field {@link Options#withDefault} in
-     * <code>options</code>; And if the class which filtered by above conditions do not exists, you will got a null
-     * array back. But if you don't want to see the <code>null</code>, you can set the field
-     * {@link Options#enableNullReturn} as false to avoid the situation, and you will got a empty array instead.
+     * classes' annotation fields are declared as below:<br>
+     * 1. Declared the tag as the field {@link Options#tag} in <code>options</code>;<br>
+     * 2. Declared the default or not as the field {@link Options#withDefault} in <code>options</code>; And if the class
+     * which filtered by above conditions do not exists, you will got a null array back. But if you don't want to see
+     * the <code>null</code>, you can set the field {@link Options#enableNullReturn} as false to avoid the situation,
+     * and you will got a empty array instead.
      * <p>
      * <b>!! Attention: </b>, the annotated class must have non-parameter public constructor, otherwise, the creation of
      * the class will failed, and you will got a runtime exception.
@@ -123,7 +126,8 @@ public final class Scanner {
      * @return The array created by the class which annotated with {@link CompileScan}.
      */
     public static <T> T[] getAnnotatedInstances(final Options options, final Class<T> instanceClass) {
-        final T[] result = createInstanceByBeans(getClassesInternal(options), instanceClass);
+        final Class<?>[] classes = ScannerImpl.getClasses(options.getCategories(), options.withDefault());
+        final T[] result = createInstanceByBeans(classes, instanceClass);
         return handleReturning(options, result, instanceClass);
     }
 
@@ -150,44 +154,6 @@ public final class Scanner {
         return instances;
     }
 
-    private static Class<?>[] getClassesInternal(final Options options) {
-        final ScannedClass[] scannedClasses = invokeGetter(options.isEnableRuntime());
-        final List<Class<?>> classesList = new ArrayList<>();
-        for (final ScannedClass scannedClass : scannedClasses) {
-            if (isLegal(options, scannedClass)) {
-                classesList.add(scannedClass.getClazz());
-            }
-        }
-
-        final Class<?>[] classes = new Class<?>[classesList.size()];
-        return classesList.toArray(classes);
-    }
-
-    private static ScannedClass[] invokeGetter(final boolean enableRuntime) {
-        ScannedClass[] classes;
-        try {
-            final Class<?> scannerImpl = Class.forName(ImplConstants.IMPL_PACKAGE + "." + ImplConstants.IMPL_CLASS);
-            final Method getterMethod = scannerImpl.getDeclaredMethod(ImplConstants.CLASS_GET);
-            classes = (ScannedClass[]) getterMethod.invoke(null);
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException exception) {
-            Log.e(TAG, "Invoke method got unexpected exception, " + exception.getMessage());
-            exception.printStackTrace();
-            if (enableRuntime) {
-                throw new GenerateFileFailedException();
-            } else {
-                classes = new ScannedClass[0];
-            }
-        } catch (InvocationTargetException exception) {
-            Log.e(TAG, "Invoke method failed, " + exception.getMessage());
-            if (enableRuntime) {
-                throw new RuntimeException(exception.getTargetException());
-            } else {
-                classes = new ScannedClass[0];
-            }
-        }
-        return classes;
-    }
-
     private static Class<?>[] handleReturning(final Options options, final Class<?>[] originResult) {
         if (!options.isEnableNullReturn() && originResult == null) {
             return new Class<?>[0];
@@ -201,14 +167,5 @@ public final class Scanner {
             return (T[]) Array.newInstance(instanceClass, 0);
         }
         return originResult;
-    }
-
-    private static boolean isLegal(final Options options, final ScannedClass scannedClass) {
-        if (options.getTags().contains(scannedClass.getTag()) || options.isListAllTags()) {
-            if (options.getGroups().contains(scannedClass.getGroup()) || options.isListAllGroups()) {
-                return !scannedClass.isDefault() || options.isWithDefault();
-            }
-        }
-        return false;
     }
 }

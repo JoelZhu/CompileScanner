@@ -28,7 +28,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private String printHumanDoing() {
         final StringBuilder stringBuilder = new StringBuilder();
-        final Options options = new Options.Builder().listAllTags().listAllGroups().create();
+        final Options options = new Options.Builder().create();
         final ICommand[] commands = Scanner.getAnnotatedInstances(options, ICommand.class);
         for (final ICommand command : commands) {
             stringBuilder.append(command.execute()).append("\n");
@@ -38,7 +38,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private String printManDoing() {
         final StringBuilder stringBuilder = new StringBuilder();
-        final Options options = new Options.Builder().tag(Constants.TAG_MAN).listAllGroups().create();
+        final Options options = new Options.Builder().category(Constants.TAG_MAN).create();
         final ICommand[] commands = Scanner.getAnnotatedInstances(options, ICommand.class);
         for (final ICommand command : commands) {
             stringBuilder.append(command.execute()).append("\n");
@@ -48,7 +48,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private String printWomanDailyDoing() {
         final StringBuilder stringBuilder = new StringBuilder();
-        final Options options = new Options.Builder().tag(Constants.TAG_WOMAN).group(Constants.GROUP_DAILY).create();
+        final Options options = new Options.Builder().category(Constants.TAG_WOMAN).create();
         final ICommand[] commands = Scanner.getAnnotatedInstances(options, ICommand.class);
         for (final ICommand command : commands) {
             stringBuilder.append(command.execute()).append("\n");

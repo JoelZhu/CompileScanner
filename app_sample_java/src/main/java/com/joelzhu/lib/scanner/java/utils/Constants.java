@@ -7,15 +7,9 @@ package com.joelzhu.lib.scanner.java.utils;
  * @since 2023-03-10
  */
 public final class Constants {
-    public static final String TAG_MAN = "Man";
+    public static final int TAG_MAN = 1;
 
-    public static final String TAG_WOMAN = "Woman";
-
-    public static final String GROUP_WORK = "Work";
-
-    public static final String GROUP_REST = "Rest";
-
-    public static final String GROUP_DAILY = "Daily";
+    public static final int TAG_WOMAN = 2;
 
     private Constants() {}
 }
