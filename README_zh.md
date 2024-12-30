@@ -64,7 +64,7 @@ public class ExampleCClass implements IExample {}
 public class Work implements ILife {}
 ```
 ```java
-@CompileScan(tag = "Life", group = "Rest)
+@CompileScan(tag = "Life", group = "Rest")
 public class Sleep implements ILife {}
 ```
 然后，你可以获取属于 ```work``` 属性的类，通过这种调用： ```final ILife[] works = Scanner.getAnnotatedInstances(new Options.Builder().tag("Life").group("Work").create(), ILife.class);``` 这个方法。
