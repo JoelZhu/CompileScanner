@@ -64,7 +64,7 @@ Consider only ```tag``` is not enough, we supply you another one: ```group```. I
 public class Work implements ILife {}
 ```
 ```java
-@CompileScan(tag = "Life", group = "Rest)
+@CompileScan(tag = "Life", group = "Rest")
 public class Sleep implements ILife {}
 ```
 And you can get classes which belonging to ```work``` by calling as ```final ILife[] works = Scanner.getAnnotatedInstances(new Options.Builder().tag("Life").group("Work").create(), ILife.class);```
